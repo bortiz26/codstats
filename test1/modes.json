@@ -1,0 +1,5 @@
+{
+    "hp": ["Mercado", "Hotel", "Zarqwa", "Breenbergh", "Sub Base"],
+    "snd": ["Asilo", "Embassy", "Terminal"],
+    "overload": ["Invasion", "Karachi", "Highrise", "Estate"]
+}

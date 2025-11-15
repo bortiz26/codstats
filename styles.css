@@ -1,0 +1,495 @@
+body {
+    background: #050608;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-transform: uppercase;
+    padding: 20px;
+}
+
+/* PAGE TITLE */
+.page-title {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* TABS */
+.tab-bar {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin: 10px auto 20px auto;
+    position: relative;
+    max-width: 700px;
+}
+
+.tab {
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.3);
+    cursor: pointer;
+    background: rgba(20,20,20,0.8);
+}
+
+.tab.active {
+    background: rgba(255,255,255,0.15);
+    box-shadow: 0 0 18px rgba(255,255,255,0.9);
+}
+
+#tab-underline {
+    position: absolute;
+    height: 3px;
+    background: white;
+    bottom: -6px;
+    left: 0;
+    width: 0;
+    transition: all .25s;
+}
+
+.tab-content {
+    display: none;
+}
+.activeTab {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
+/* COLLAPSE HEADERS */
+.modeHeader {
+    background: #444;
+    font-size: 1.4em;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 18px;
+    cursor: pointer;
+}
+
+.mapHeader {
+    background: #222;
+    font-size: 1.1em;
+    padding: 8px;
+    border-radius: 8px;
+    text-align: center;
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+/* TEAM BOXES */
+.teamBox {
+    background: #15161b;
+    border-radius: 14px;
+    padding: 12px;
+    margin: 12px auto;
+    width: 90%;
+    max-width: 950px;
+    text-align: center;
+    border: 2px solid var(--glow);
+    box-shadow: 0 0 30px var(--glow);
+    cursor: pointer;
+}
+
+.teamBox img {
+    width: 70px;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 0 8px var(--glow));
+}
+
+.teamTitle {
+    font-size: 1.4em;
+    margin-bottom: 6px;
+    text-shadow: 0 0 10px var(--glow);
+}
+
+/* PLAYER TABLE */
+.playerTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    background: #000000aa;
+}
+
+.playerTable td,
+.playerTable th {
+    border: 1px solid #666;
+    padding: 6px;
+    text-align: center;
+}
+
+.playerName {
+    background: var(--glow);
+    color: white;
+    font-weight: bold;
+}
+
+/* CHART */
+.chart-container {
+    width: 100%;
+    max-width: 520px;
+    margin: 15px auto;
+    height: 300px;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* ============================
+   LAST 5 MATCHES — SCROLL CARDS
+   ============================ */
+
+   .match-strip {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    padding: 10px 4px;
+    margin: 12px 0;
+    scroll-snap-type: x mandatory;
+}
+
+.match-strip::-webkit-scrollbar {
+    height: 6px;
+}
+
+.match-strip::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 999px;
+}
+
+.match-card {
+    min-width: 160px;
+    background: #0d0f12;
+    border-radius: 12px;
+    padding: 12px;
+    border: 2px solid var(--glow);
+    box-shadow: 0 0 18px var(--glow);
+    scroll-snap-align: center;
+    flex-shrink: 0;
+    text-align: center;
+    transition: transform .15s;
+}
+
+.match-card:hover {
+    transform: translateY(-4px);
+}
+
+.card-map {
+    font-size: 1.15em;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+.kd-good { color: #4cd137; font-weight: bold; }
+.kd-bad  { color: #e84118; font-weight: bold; }
+
+/* ============================
+   STREAKS TAB
+   ============================ */
+
+   .streak-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.streak-card {
+    width: 180px;
+    background: #111;
+    padding: 14px;
+    border-radius: 12px;
+    text-align: center;
+    border: 2px solid var(--glow);
+    box-shadow: 0 0 20px var(--glow);
+    text-transform: uppercase;
+}
+
+.streak-player {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.streak-team {
+    font-size: .9em;
+    color: #aaa;
+    margin-bottom: 8px;
+}
+
+.streak-kd {
+    font-size: 1em;
+    font-weight: bold;
+}
+
+/* ============================
+   MODE STREAK SECTION STYLING
+   ============================ */
+
+/* Section outer wrapper */
+.streak-section {
+    margin-top: 14px;
+    padding: 14px;
+    border-radius: 16px;
+    background: rgba(10, 10, 12, 0.6);
+}
+
+/* Section header */
+.streak-section-title {
+    text-align: center;
+    font-size: 1.4em;
+    font-weight: bold;
+    padding: 10px 0;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+/* HOT */
+.streak-hot-title {
+    background: rgba(255, 60, 60, 0.15);
+    border: 2px solid #ff3b3b;
+    box-shadow: 0 0 16px #ff3b3b;
+    color: #ff9a9a;
+}
+
+.streak-section.hot {
+    background: rgba(255, 50, 50, 0.12);
+    border: 2px solid rgba(255, 60, 60, 0.5);
+    box-shadow: 0 0 20px rgba(255, 60, 60, 0.5);
+}
+
+/* EVEN */
+.streak-even-title {
+    background: rgba(200, 200, 200, 0.12);
+    border: 2px solid #cccccc;
+    box-shadow: 0 0 16px #cccccc;
+    color: #eeeeee;
+}
+
+.streak-section.even {
+    background: rgba(200, 200, 200, 0.08);
+    border: 2px solid rgba(200, 200, 200, 0.4);
+    box-shadow: 0 0 20px rgba(200, 200, 200, 0.4);
+}
+
+/* COLD */
+.streak-cold-title {
+    background: rgba(70, 200, 255, 0.15);
+    border: 2px solid #4dcfff;
+    box-shadow: 0 0 16px #4dcfff;
+    color: #bdf3ff;
+}
+
+.streak-section.cold {
+    background: rgba(40, 160, 220, 0.12);
+    border: 2px solid rgba(80, 200, 255, 0.5);
+    box-shadow: 0 0 20px rgba(80, 200, 255, 0.5);
+}
+
+/* Card color matching */
+.streak-card.hot {
+    border: 2px solid #ff3b3b !important;
+    box-shadow: 0 0 15px #ff3b3b !important;
+}
+
+.streak-card.even {
+    border: 2px solid #cccccc !important;
+    box-shadow: 0 0 15px #cccccc !important;
+}
+
+.streak-card.cold {
+    border: 2px solid #4dcfff !important;
+    box-shadow: 0 0 15px #4dcfff !important;
+}
+
+
+
+.teamBlock {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+}
+
+.teamTitleMini {
+    font-size: 1.05em;
+    font-weight: bold;
+    margin-bottom: 6px;
+    text-align: center;
+    text-shadow: 0 0 6px var(--glow);
+}
+
+.playerLineMini {
+    font-size: .95em;
+    text-align: center;
+    margin: 3px 0;
+}
+
+.matchCardSide {
+    width: 95%;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 15px;
+    background: #0a0b0d;
+    border: 2px solid var(--glow);
+    box-shadow: 0 0 20px var(--glow);
+    border-radius: 14px;
+}
+
+.sideTop {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto 1fr;
+    text-align: center;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 10px;
+}
+
+.sideTeamName {
+    font-size: 1.2em;
+    font-weight: bold;
+    text-shadow: 0 0 8px var(--glow);
+}
+
+.sideScore {
+    font-size: 1.6em;
+    font-weight: bold;
+}
+
+.sideScoreText {
+    font-size: 1em;
+    opacity: 0.7;
+}
+
+.sideGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    padding: 10px 0;
+}
+
+.sideColumn {
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.sideLine {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: .95em;
+}
+
+.sidePlayer {
+    font-weight: bold;
+}
+
+.sideKD {
+    opacity: 0.85;
+}
+
+.sideFooter {
+    text-align: center;
+    margin-top: 10px;
+    opacity: 0.7;
+    font-size: .9em;
+}
+
+
+/* ========================================= */
+/* MATCHES TAB — FIXED LAYOUT + GLOW THEME   */
+/* ========================================= */
+
+.matchCardSide {
+    width: 95%;
+    max-width: 1000px;
+    margin: 25px auto;
+    background: #0b0d11;
+    padding: 18px;
+    border: 2px solid var(--glow);
+    box-shadow: 0 0 22px var(--glow);
+    border-radius: 14px;
+}
+
+/* Header Row */
+.matchHeader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.matchLogo {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px var(--glow));
+}
+
+.matchTeamName {
+    font-size: 1.3em;
+    font-weight: bold;
+    text-shadow: 0 0 6px var(--glow);
+}
+
+.matchScore {
+    font-size: 1.5em;
+    font-weight: bold;
+    padding: 0 6px;
+}
+
+/* Two Tables Side by Side */
+.matchTwoTables {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-top: 15px;
+    width: 100%;
+}
+
+/* New columns */
+.leftTableCol,
+.rightTableCol {
+    background: rgba(255,255,255,0.05);
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #333;
+}
+
+/* Player stat tables */
+.matchTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.matchTable th {
+    background: rgba(255,255,255,0.1);
+    font-weight: bold;
+    font-size: 1em;
+    padding: 6px;
+    border-bottom: 1px solid #666;
+}
+
+.matchTable td {
+    padding: 6px;
+    border-bottom: 1px solid #333;
+}
+
+/* Date */
+.matchDate {
+    text-align: center;
+    margin-top: 12px;
+    opacity: 0.7;
+    font-size: .9em;
+}

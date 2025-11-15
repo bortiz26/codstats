@@ -1,0 +1,705 @@
+{
+    "breach": {
+        "overload": {
+            "Highrise": {
+                "cammy": {
+                    "totalDeaths": 5,
+                    "totalKills": 6,
+                    "updates": 1
+                },
+                "nastie": {
+                    "totalDeaths": 3,
+                    "totalKills": 4,
+                    "updates": 1
+                },
+                "purj": {
+                    "totalDeaths": 2,
+                    "totalKills": 2,
+                    "updates": 1
+                },
+                "snoopy": {
+                    "totalDeaths": 4,
+                    "totalKills": 3,
+                    "updates": 1
+                }
+            }
+        }
+    },
+    "cloud9": {
+        "hp": {
+            "Mercado": {
+                "afro": {
+                    "totalDeaths": 5,
+                    "totalKills": 6,
+                    "updates": 1
+                },
+                "beans": {
+                    "totalDeaths": 3,
+                    "totalKills": 4,
+                    "updates": 1
+                },
+                "mack": {
+                    "totalDeaths": 4,
+                    "totalKills": 2,
+                    "updates": 1
+                },
+                "vivid": {
+                    "totalDeaths": 6,
+                    "totalKills": 5,
+                    "updates": 1
+                }
+            }
+        },
+        "snd": {
+            "Terminal": {
+                "afro": {
+                    "totalDeaths": 6,
+                    "totalKills": 8,
+                    "updates": 1
+                },
+                "beans": {
+                    "totalDeaths": 4,
+                    "totalKills": 5,
+                    "updates": 1
+                },
+                "mack": {
+                    "totalDeaths": 3,
+                    "totalKills": 4,
+                    "updates": 1
+                },
+                "vivid": {
+                    "totalDeaths": 5,
+                    "totalKills": 4,
+                    "updates": 1
+                }
+            }
+        }
+    },
+    "falcons": {
+        "snd": {
+            "Asilo": {
+                "cellium": {
+                    "totalDeaths": 5,
+                    "totalKills": 6,
+                    "updates": 1
+                },
+                "exnid": {
+                    "totalDeaths": 7,
+                    "totalKills": 8,
+                    "updates": 1
+                },
+                "kismet": {
+                    "totalDeaths": 3,
+                    "totalKills": 4,
+                    "updates": 1
+                },
+                "pred": {
+                    "totalDeaths": 8,
+                    "totalKills": 9,
+                    "updates": 1
+                }
+            }
+        }
+    },
+    "faze": {
+        "hp": {
+            "Breenbergh": {
+                "abuzah": {
+                    "totalDeaths": 2,
+                    "totalKills": 1,
+                    "updates": 1
+                },
+                "drazah": {
+                    "totalDeaths": 4,
+                    "totalKills": 3,
+                    "updates": 1
+                },
+                "o4": {
+                    "totalDeaths": 1,
+                    "totalKills": 2,
+                    "updates": 1
+                },
+                "simp": {
+                    "totalDeaths": 6,
+                    "totalKills": 5,
+                    "updates": 1
+                }
+            },
+            "Hotel": {
+                "abuzah": {
+                    "totalDeaths": 2,
+                    "totalKills": 2,
+                    "updates": 1
+                },
+                "drazah": {
+                    "totalDeaths": 2,
+                    "totalKills": 2,
+                    "updates": 1
+                },
+                "o4": {
+                    "totalDeaths": 2,
+                    "totalKills": 2,
+                    "updates": 1
+                },
+                "simp": {
+                    "totalDeaths": 2,
+                    "totalKills": 2,
+                    "updates": 1
+                }
+            },
+            "Mercado": {
+                "abuzah": {
+                    "totalDeaths": 24,
+                    "totalKills": 23,
+                    "updates": 5
+                },
+                "drazah": {
+                    "totalDeaths": 31,
+                    "totalKills": 26,
+                    "updates": 5
+                },
+                "o4": {
+                    "totalDeaths": 16,
+                    "totalKills": 10,
+                    "updates": 5
+                },
+                "simp": {
+                    "totalDeaths": 38,
+                    "totalKills": 36,
+                    "updates": 5
+                }
+            },
+            "Zarqwa": {
+                "abuzah": {
+                    "totalDeaths": 3,
+                    "totalKills": 3,
+                    "updates": 1
+                },
+                "drazah": {
+                    "totalDeaths": 3,
+                    "totalKills": 3,
+                    "updates": 1
+                },
+                "o4": {
+                    "totalDeaths": 2,
+                    "totalKills": 3,
+                    "updates": 1
+                },
+                "simp": {
+                    "totalDeaths": 3,
+                    "totalKills": 3,
+                    "updates": 1
+                }
+            }
+        },
+        "overload": {
+            "Highrise": {
+                "abuzah": {
+                    "totalDeaths": 4,
+                    "totalKills": 2,
+                    "updates": 1
+                },
+                "drazah": {
+                    "totalDeaths": 6,
+                    "totalKills": 5,
+                    "updates": 1
+                },
+                "o4": {
+                    "totalDeaths": 1,
+                    "totalKills": 2,
+                    "updates": 1
+                },
+                "simp": {
+                    "totalDeaths": 8,
+                    "totalKills": 7,
+                    "updates": 1
+                }
+            },
+            "Invasion": {
+                "abuzah": {
+                    "totalDeaths": 49,
+                    "totalKills": 5,
+                    "updates": 2
+                },
+                "drazah": {
+                    "totalDeaths": 13,
+                    "totalKills": 71,
+                    "updates": 2
+                },
+                "o4": {
+                    "totalDeaths": 3,
+                    "totalKills": 3,
+                    "updates": 2
+                },
+                "simp": {
+                    "totalDeaths": 14,
+                    "totalKills": 15,
+                    "updates": 2
+                }
+            },
+            "Karachi": {
+                "abuzah": {
+                    "totalDeaths": 8,
+                    "totalKills": 6,
+                    "updates": 2
+                },
+                "drazah": {
+                    "totalDeaths": 10,
+                    "totalKills": 51,
+                    "updates": 2
+                },
+                "o4": {
+                    "totalDeaths": 2,
+                    "totalKills": 3,
+                    "updates": 2
+                },
+                "simp": {
+                    "totalDeaths": 11,
+                    "totalKills": 10,
+                    "updates": 2
+                }
+            }
+        },
+        "snd": {
+            "Asilo": {
+                "abuzah": {
+                    "totalDeaths": 24,
+                    "totalKills": 22,
+                    "updates": 5
+                },
+                "drazah": {
+                    "totalDeaths": 30,
+                    "totalKills": 27,
+                    "updates": 5
+                },
+                "o4": {
+                    "totalDeaths": 111,
+                    "totalKills": 21,
+                    "updates": 5
+                },
+                "simp": {
+                    "totalDeaths": 47,
+                    "totalKills": 28,
+                    "updates": 5
+                }
+            },
+            "Embassy": {
+                "abuzah": {
+                    "totalDeaths": 2,
+                    "totalKills": 1,
+                    "updates": 1
+                },
+                "drazah": {
+                    "totalDeaths": 5,
+                    "totalKills": 4,
+                    "updates": 1
+                },
+                "o4": {
+                    "totalDeaths": 2,
+                    "totalKills": 2,
+                    "updates": 1
+                },
+                "simp": {
+                    "totalDeaths": 7,
+                    "totalKills": 6,
+                    "updates": 1
+                }
+            },
+            "Terminal": {
+                "abuzah": {
+                    "totalDeaths": 14,
+                    "totalKills": 11,
+                    "updates": 4
+                },
+                "drazah": {
+                    "totalDeaths": 21,
+                    "totalKills": 18,
+                    "updates": 4
+                },
+                "o4": {
+                    "totalDeaths": 11,
+                    "totalKills": 9,
+                    "updates": 4
+                },
+                "simp": {
+                    "totalDeaths": 27,
+                    "totalKills": 24,
+                    "updates": 4
+                }
+            }
+        }
+    },
+    "g2": {
+        "hp": {
+            "Breenbergh": {
+                "estreal": {
+                    "totalDeaths": 8,
+                    "totalKills": 7,
+                    "updates": 1
+                },
+                "g1": {
+                    "totalDeaths": 8,
+                    "totalKills": 9,
+                    "updates": 1
+                },
+                "g2": {
+                    "totalDeaths": 6,
+                    "totalKills": 7,
+                    "updates": 1
+                },
+                "g3": {
+                    "totalDeaths": 4,
+                    "totalKills": 5,
+                    "updates": 1
+                }
+            }
+        }
+    },
+    "guerrillas m8": {
+        "snd": {
+            "Embassy": {
+                "guerrillas1": {
+                    "totalDeaths": 7,
+                    "totalKills": 8,
+                    "updates": 1
+                },
+                "guerrillas2": {
+                    "totalDeaths": 6,
+                    "totalKills": 6,
+                    "updates": 1
+                },
+                "guerrillas3": {
+                    "totalDeaths": 65,
+                    "totalKills": 6,
+                    "updates": 1
+                },
+                "guerrillas4": {
+                    "totalDeaths": 3,
+                    "totalKills": 4,
+                    "updates": 1
+                }
+            }
+        }
+    },
+    "heretics": {
+        "hp": {
+            "Hotel": {
+                "mettalz": {
+                    "totalDeaths": 2,
+                    "totalKills": 2,
+                    "updates": 1
+                },
+                "renkor": {
+                    "totalDeaths": 2,
+                    "totalKills": 2,
+                    "updates": 1
+                },
+                "super": {
+                    "totalDeaths": 2,
+                    "totalKills": 2,
+                    "updates": 1
+                },
+                "traixx": {
+                    "totalDeaths": 2,
+                    "totalKills": 2,
+                    "updates": 1
+                }
+            },
+            "Mercado": {
+                "mettalz": {
+                    "totalDeaths": 12,
+                    "totalKills": 12,
+                    "updates": 3
+                },
+                "renkor": {
+                    "totalDeaths": 14,
+                    "totalKills": 16,
+                    "updates": 3
+                },
+                "super": {
+                    "totalDeaths": 14,
+                    "totalKills": 12,
+                    "updates": 3
+                },
+                "traixx": {
+                    "totalDeaths": 15,
+                    "totalKills": 12,
+                    "updates": 3
+                }
+            }
+        }
+    },
+    "koi": {
+        "hp": {
+            "Mercado": {
+                "cleanx": {
+                    "totalDeaths": 7,
+                    "totalKills": 7,
+                    "updates": 1
+                },
+                "insight": {
+                    "totalDeaths": 4,
+                    "totalKills": 4,
+                    "updates": 1
+                },
+                "joedeceives": {
+                    "totalDeaths": 4,
+                    "totalKills": 4,
+                    "updates": 1
+                },
+                "reeal": {
+                    "totalDeaths": 5,
+                    "totalKills": 5,
+                    "updates": 1
+                }
+            },
+            "Zarqwa": {
+                "cleanx": {
+                    "totalDeaths": 3,
+                    "totalKills": 3,
+                    "updates": 1
+                },
+                "insight": {
+                    "totalDeaths": 3,
+                    "totalKills": 3,
+                    "updates": 1
+                },
+                "joedeceives": {
+                    "totalDeaths": 3,
+                    "totalKills": 3,
+                    "updates": 1
+                },
+                "reeal": {
+                    "totalDeaths": 3,
+                    "totalKills": 3,
+                    "updates": 1
+                }
+            }
+        }
+    },
+    "optic": {
+        "hp": {
+            "Mercado": {
+                "dashy": {
+                    "totalDeaths": 7,
+                    "totalKills": 8,
+                    "updates": 1
+                },
+                "huke": {
+                    "totalDeaths": 5,
+                    "totalKills": 6,
+                    "updates": 1
+                },
+                "mercules": {
+                    "totalDeaths": 3,
+                    "totalKills": 4,
+                    "updates": 1
+                },
+                "shotzzy": {
+                    "totalDeaths": 1,
+                    "totalKills": 2,
+                    "updates": 1
+                }
+            }
+        },
+        "overload": {
+            "Invasion": {
+                "dashy": {
+                    "totalDeaths": 7,
+                    "totalKills": 7,
+                    "updates": 1
+                },
+                "huke": {
+                    "totalDeaths": 5,
+                    "totalKills": 6,
+                    "updates": 1
+                },
+                "mercules": {
+                    "totalDeaths": 3,
+                    "totalKills": 4,
+                    "updates": 1
+                },
+                "shotzzy": {
+                    "totalDeaths": 5,
+                    "totalKills": 4,
+                    "updates": 1
+                }
+            },
+            "Karachi": {
+                "dashy": {
+                    "totalDeaths": 7,
+                    "totalKills": 9,
+                    "updates": 1
+                },
+                "huke": {
+                    "totalDeaths": 5,
+                    "totalKills": 6,
+                    "updates": 1
+                },
+                "mercules": {
+                    "totalDeaths": 3,
+                    "totalKills": 4,
+                    "updates": 1
+                },
+                "shotzzy": {
+                    "totalDeaths": 3,
+                    "totalKills": 2,
+                    "updates": 1
+                }
+            }
+        }
+    },
+    "royale ravens": {
+        "overload": {
+            "Invasion": {
+                "craze": {
+                    "totalDeaths": 3,
+                    "totalKills": 5,
+                    "updates": 1
+                },
+                "nero": {
+                    "totalDeaths": 6,
+                    "totalKills": 7,
+                    "updates": 1
+                },
+                "slasher": {
+                    "totalDeaths": 4,
+                    "totalKills": 5,
+                    "updates": 1
+                },
+                "wrecks": {
+                    "totalDeaths": 4,
+                    "totalKills": 3,
+                    "updates": 1
+                }
+            }
+        }
+    },
+    "surge": {
+        "hp": {
+            "Mercado": {
+                "surge1": {
+                    "totalDeaths": 6,
+                    "totalKills": 7,
+                    "updates": 1
+                },
+                "surge2": {
+                    "totalDeaths": 4,
+                    "totalKills": 5,
+                    "updates": 1
+                },
+                "surge3": {
+                    "totalDeaths": 2,
+                    "totalKills": 3,
+                    "updates": 1
+                },
+                "surge4": {
+                    "totalDeaths": 5,
+                    "totalKills": 4,
+                    "updates": 1
+                }
+            }
+        },
+        "snd": {
+            "Terminal": {
+                "surge1": {
+                    "totalDeaths": 5,
+                    "totalKills": 5,
+                    "updates": 1
+                },
+                "surge2": {
+                    "totalDeaths": 5,
+                    "totalKills": 5,
+                    "updates": 1
+                },
+                "surge3": {
+                    "totalDeaths": 5,
+                    "totalKills": 5,
+                    "updates": 1
+                },
+                "surge4": {
+                    "totalDeaths": 5,
+                    "totalKills": 5,
+                    "updates": 1
+                }
+            }
+        }
+    },
+    "thieves": {
+        "overload": {
+            "Karachi": {
+                "abezy": {
+                    "totalDeaths": 4,
+                    "totalKills": 5,
+                    "updates": 1
+                },
+                "hydra": {
+                    "totalDeaths": 5,
+                    "totalKills": 4,
+                    "updates": 1
+                },
+                "kenny": {
+                    "totalDeaths": 6,
+                    "totalKills": 78,
+                    "updates": 1
+                },
+                "scrap": {
+                    "totalDeaths": 7,
+                    "totalKills": 6,
+                    "updates": 1
+                }
+            }
+        },
+        "snd": {
+            "Asilo": {
+                "abezy": {
+                    "totalDeaths": 23,
+                    "totalKills": 93,
+                    "updates": 4
+                },
+                "apex": {
+                    "totalDeaths": 5,
+                    "totalKills": 4,
+                    "updates": 1
+                },
+                "hydra": {
+                    "totalDeaths": 6,
+                    "totalKills": 16,
+                    "updates": 3
+                },
+                "kenny": {
+                    "totalDeaths": 23,
+                    "totalKills": 71,
+                    "updates": 4
+                },
+                "scrap": {
+                    "totalDeaths": 20,
+                    "totalKills": 14,
+                    "updates": 4
+                }
+            },
+            "Terminal": {
+                "abezy": {
+                    "totalDeaths": 7,
+                    "totalKills": 8,
+                    "updates": 2
+                },
+                "hydra": {
+                    "totalDeaths": 15,
+                    "totalKills": 16,
+                    "updates": 2
+                },
+                "kenny": {
+                    "totalDeaths": 10,
+                    "totalKills": 13,
+                    "updates": 2
+                },
+                "scrap": {
+                    "totalDeaths": 14,
+                    "totalKills": 15,
+                    "updates": 2
+                }
+            }
+        }
+    }
+}
