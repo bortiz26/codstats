@@ -5,7 +5,7 @@
 body {
     background: 
         linear-gradient(rgba(5,6,8,0.85), rgba(5,6,8,0.85)),
-        url("cod.webp") no-repeat center center fixed;
+        url("test1/logos/cod.webp") no-repeat center center fixed;
     background-size: cover;
 
     color: white;
