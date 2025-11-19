@@ -149,24 +149,24 @@
             },
             "Mercado": {
                 "abuzah": {
-                    "totalDeaths": 24,
-                    "totalKills": 23,
-                    "updates": 5
+                    "totalDeaths": 28,
+                    "totalKills": 26,
+                    "updates": 6
                 },
                 "drazah": {
-                    "totalDeaths": 31,
-                    "totalKills": 26,
-                    "updates": 5
+                    "totalDeaths": 38,
+                    "totalKills": 82,
+                    "updates": 6
                 },
                 "o4": {
-                    "totalDeaths": 16,
-                    "totalKills": 10,
-                    "updates": 5
+                    "totalDeaths": 18,
+                    "totalKills": 11,
+                    "updates": 6
                 },
                 "simp": {
-                    "totalDeaths": 38,
-                    "totalKills": 36,
-                    "updates": 5
+                    "totalDeaths": 47,
+                    "totalKills": 44,
+                    "updates": 6
                 }
             },
             "Zarqwa": {
@@ -626,6 +626,30 @@
         }
     },
     "thieves": {
+        "hp": {
+            "Mercado": {
+                "abezy": {
+                    "totalDeaths": 2,
+                    "totalKills": 3,
+                    "updates": 1
+                },
+                "hydra": {
+                    "totalDeaths": 8,
+                    "totalKills": 9,
+                    "updates": 1
+                },
+                "kenny": {
+                    "totalDeaths": 4,
+                    "totalKills": 5,
+                    "updates": 1
+                },
+                "scrap": {
+                    "totalDeaths": 6,
+                    "totalKills": 7,
+                    "updates": 1
+                }
+            }
+        },
         "overload": {
             "Karachi": {
                 "abezy": {

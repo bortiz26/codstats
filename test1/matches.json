@@ -2302,5 +2302,101 @@
         "player": "simp",
         "team": "faze",
         "teamScore": 3
+    },
+    {
+        "date": "2025-11-17",
+        "deaths": 2,
+        "kills": 1,
+        "map": "Mercado",
+        "matchID": 25,
+        "mode": "hp",
+        "oppScore": 11,
+        "player": "o4",
+        "team": "faze",
+        "teamScore": 12
+    },
+    {
+        "date": "2025-11-17",
+        "deaths": 4,
+        "kills": 3,
+        "map": "Mercado",
+        "matchID": 25,
+        "mode": "hp",
+        "oppScore": 11,
+        "player": "abuzah",
+        "team": "faze",
+        "teamScore": 12
+    },
+    {
+        "date": "2025-11-17",
+        "deaths": 7,
+        "kills": 56,
+        "map": "Mercado",
+        "matchID": 25,
+        "mode": "hp",
+        "oppScore": 11,
+        "player": "drazah",
+        "team": "faze",
+        "teamScore": 12
+    },
+    {
+        "date": "2025-11-17",
+        "deaths": 9,
+        "kills": 8,
+        "map": "Mercado",
+        "matchID": 25,
+        "mode": "hp",
+        "oppScore": 11,
+        "player": "simp",
+        "team": "faze",
+        "teamScore": 12
+    },
+    {
+        "date": "2025-11-17",
+        "deaths": 8,
+        "kills": 9,
+        "map": "Mercado",
+        "matchID": 25,
+        "mode": "hp",
+        "oppScore": 12,
+        "player": "hydra",
+        "team": "thieves",
+        "teamScore": 11
+    },
+    {
+        "date": "2025-11-17",
+        "deaths": 6,
+        "kills": 7,
+        "map": "Mercado",
+        "matchID": 25,
+        "mode": "hp",
+        "oppScore": 12,
+        "player": "scrap",
+        "team": "thieves",
+        "teamScore": 11
+    },
+    {
+        "date": "2025-11-17",
+        "deaths": 4,
+        "kills": 5,
+        "map": "Mercado",
+        "matchID": 25,
+        "mode": "hp",
+        "oppScore": 12,
+        "player": "kenny",
+        "team": "thieves",
+        "teamScore": 11
+    },
+    {
+        "date": "2025-11-17",
+        "deaths": 2,
+        "kills": 3,
+        "map": "Mercado",
+        "matchID": 25,
+        "mode": "hp",
+        "oppScore": 12,
+        "player": "abezy",
+        "team": "thieves",
+        "teamScore": 11
     }
 ]

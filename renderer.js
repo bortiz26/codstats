@@ -1,3 +1,66 @@
+// Collapse EVERYTHING on the page before opening a new search result
+function collapseAllSections() {
+    // GAME MODES
+    document.querySelectorAll("[id^='mode_']").forEach(el => el.style.display = "none");
+
+    // MAPS
+    document.querySelectorAll("[id*='_hp_'], [id*='_snd_'], [id*='_overload_']")
+        .forEach(el => el.style.display = "none");
+
+    // ALL Last5 collapsibles
+    document.querySelectorAll("[id^='last5_']").forEach(el => el.style.display = "none");
+
+    // ALL streaks sections
+    //document.querySelectorAll("[id^='streaks_']").forEach(el => el.style.display = "none");
+
+    // ALL matches sections
+    document.querySelectorAll("[id^='matchMode_']").forEach(el => el.style.display = "none");
+
+    // ALL opponent breakdowns
+    document.querySelectorAll("[id*='_opp_']").forEach(el => el.style.display = "none");
+}
+try {
+    console.log("JS Loaded OK");
+} catch(e) {}
+
+/*
+// ============================================================
+// BEST / WORST MAP CALCULATIONS PER PLAYER
+// ============================================================
+function getPlayerBestWorstMaps(matches, team, player) {
+    const mapStats = {};
+
+    matches
+        .filter(m => m.team === team && m.player === player)
+        .forEach(m => {
+            const map = m.map;
+            if (!mapStats[map]) mapStats[map] = { kills: 0, deaths: 0, games: 0, mode: m.mode };
+
+            mapStats[map].kills += m.kills;
+            mapStats[map].deaths += m.deaths;
+            mapStats[map].games++;
+
+            // overwrite mode to last used (KD is averaged across all games)
+            mapStats[map].mode = m.mode;
+        });
+
+    const maps = Object.keys(mapStats);
+    if (maps.length === 0) return null;
+
+    let best = null, worst = null;
+
+    maps.forEach(map => {
+        const s = mapStats[map];
+        const kd = s.deaths > 0 ? s.kills / s.deaths : s.kills;
+
+        if (!best || kd > best.kd) best = { map, kd, mode: s.mode };
+        if (!worst || kd < worst.kd) worst = { map, kd, mode: s.mode };
+    });
+
+    return { best, worst };
+}
+*/
+
 // ============================
 // LOAD JSON — CACHE BUST FIX
 // ============================
@@ -56,9 +119,396 @@ async function initPage() {
     buildTabs();
     buildModes(scores, teams, modeMaps);
     buildLast5(scores, matches, teams);
-    buildStreaks(matches, teams);
+    //buildStreaks(matches, teams);
     buildMatches(matches, teams, modeMaps);
+    initSearch(teams, modeMaps, matches);
+
 }
+
+/* ============================================================
+   BULLETPROOF CENTER SCROLL — always works
+   ============================================================ */
+   function smoothScrollCenter(el) {
+    if (!el) return;
+
+    let attempts = 0;
+
+    const waitUntilVisible = setInterval(() => {
+        attempts++;
+
+        const style = window.getComputedStyle(el);
+        const isVisible = style.display !== "none" && el.offsetHeight > 0;
+
+        // If visible OR too many attempts → stop waiting and scroll
+        if (isVisible || attempts > 40) {
+            clearInterval(waitUntilVisible);
+
+            const rect = el.getBoundingClientRect();
+            const absoluteY = rect.top + window.pageYOffset;
+            const scrollY = absoluteY - (window.innerHeight / 2) + rect.height / 2;
+
+            window.scrollTo({
+                top: scrollY,
+                behavior: "smooth"
+            });
+        }
+
+    }, 25); // checks every 25ms
+}
+
+/* ============================================================
+   GLOBAL SEARCH ENGINE — WITH TEAM→MODE→MAP + UNIQUE MATCH SEARCH
+   ============================================================ */
+   async function initSearch(teams, modeMaps, matches) {
+    const input = document.getElementById("globalSearch");
+    const resultsBox = document.getElementById("searchResults");
+
+    const modes = Object.keys(modeMaps);
+    const maps = modes.flatMap(mode => modeMaps[mode].map(m => ({ mode, map: m })));
+    const teamNames = Object.keys(teams);
+
+    const searchItems = [];
+
+    /* =============================
+       PLAYER SEARCH ITEMS
+       ============================= */
+    teamNames.forEach(team => {
+        teams[team].forEach(player => {
+            searchItems.push({
+                type: "player",
+                label: `${cap(player)} (${cap(team)})`,
+                team: team.toLowerCase(),
+                player: player.toLowerCase()
+            });
+        });
+    });
+
+    /* ============================================================
+   PLAYER + MODE SEARCH ITEMS (hydra hard point)
+   ============================================================ */
+teamNames.forEach(team => {
+    teams[team].forEach(player => {
+        modes.forEach(mode => {
+            searchItems.push({
+                type: "player_mode",
+                label: `${cap(player)} — ${modeNames[mode] ?? cap(mode)}`,
+                team,
+                player,
+                mode
+            });
+        });
+    });
+});
+
+
+    /* =============================
+       MODE SEARCH ITEMS
+       ============================= */
+    modes.forEach(mode => {
+        searchItems.push({
+            type: "mode",
+            label: modeNames[mode] ?? cap(mode),
+            mode
+        });
+    });
+
+    /* =============================
+       MAP SEARCH ITEMS
+       ============================= */
+    maps.forEach(x => {
+        searchItems.push({
+            type: "map",
+            label: `${x.map} — ${modeNames[x.mode] ?? cap(x.mode)}`,
+            mode: x.mode,
+            map: x.map
+        });
+    });
+
+    /* ============================================================
+       TEAM → MODE → MAP SEARCH ITEMS (NEW)
+       ============================================================ */
+    teamNames.forEach(team => {
+        const lowerTeam = team.toLowerCase();
+
+        Object.keys(modeMaps).forEach(mode => {
+            modeMaps[mode].forEach(map => {
+                searchItems.push({
+                    type: "team_mode_map",
+                    label: `${cap(team)} — ${modeNames[mode]} — ${map}`,
+                    team: lowerTeam,
+                    mode,
+                    map
+                });
+            });
+        });
+    });
+
+    /* ============================================================
+       UNIQUE MATCH SEARCH ITEMS (DEDUPED)
+       ============================================================ */
+    const seenKeys = new Set();
+
+    matches.forEach(m => {
+        const allSameMatch = matches.filter(x => x.matchID === m.matchID);
+        const opponent = allSameMatch.find(x => x.team !== m.team)?.team || "Unknown";
+
+        const teamA = m.team.toLowerCase();
+        const teamB = opponent.toLowerCase();
+        const mode = m.mode;
+        const map = m.map;
+
+        const key = [teamA, teamB].sort().join("_") + "_" + mode + "_" + map;
+
+        if (seenKeys.has(key)) return;
+        seenKeys.add(key);
+
+        // NORMAL ORDER
+        searchItems.push({
+            type: "vs_match",
+            label: `${cap(teamA)} vs ${cap(teamB)} — ${modeNames[mode]} — ${map}`,
+            teamA,
+            teamB,
+            mode,
+            map
+        });
+
+        // REVERSE ORDER SEARCH
+        searchItems.push({
+            type: "vs_match",
+            label: `${cap(teamB)} vs ${cap(teamA)} — ${modeNames[mode]} — ${map}`,
+            teamA: teamB,
+            teamB: teamA,
+            mode,
+            map
+        });
+    });
+
+
+    /* ============================================================
+       RENDER SEARCH DROPDOWN
+       ============================================================ */
+    function showResults(list) {
+        if (list.length === 0) {
+            resultsBox.style.display = "none";
+            return;
+        }
+
+        resultsBox.innerHTML = list.map(item => `
+            <div class="search-item" data-data='${JSON.stringify(item)}'>
+                ${item.label}
+            </div>
+        `).join("");
+
+        resultsBox.style.display = "block";
+
+        document.querySelectorAll(".search-item").forEach(el => {
+            el.onclick = () => {
+                const data = JSON.parse(el.dataset.data);
+                resultsBox.style.display = "none";
+                input.value = "";
+                handleSearchSelect(data);
+            };
+        });
+    }
+
+    /* ============================================================
+   ADVANCED SAFARI-COMPATIBLE FUZZY SEARCH
+   Normalizes: —, –, -, spaces, uppercase, extra symbols
+   ============================================================ */
+input.addEventListener("input", () => {
+    const qRaw = input.value.trim();
+    if (qRaw === "") {
+        resultsBox.style.display = "none";
+        return;
+    }
+
+    // Normalize query
+    const q = qRaw
+        .toLowerCase()
+        .replace(/[-–—]+/g, " ")   // convert ALL dash types to spaces
+        .replace(/[()]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    const parts = q.split(" ").filter(x => x.length > 0);
+
+    const filtered = searchItems.filter(item => {
+        // Normalize label the SAME way
+        const lbl = item.label
+            .toLowerCase()
+            .replace(/[-–—]+/g, " ")  // normalize long dashes
+            .replace(/[()]/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
+
+        // Split into words: team, vs, team, mode, map
+        const words = lbl.split(" ");
+
+        /* =====================================================
+           Each search part must match at least ONE label word
+           ===================================================== */
+        for (const p of parts) {
+            let found = false;
+
+            for (const w of words) {
+                if (w.includes(p)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) return false;
+        }
+
+        return true;
+    }).slice(0, 15);
+
+    showResults(filtered);
+});
+
+}
+
+
+/* ============================================================
+   HANDLE SEARCH RESULT CLICK — Unified Logic
+   ============================================================ */
+function handleSearchSelect(item) {
+    const openTab = name =>
+        document.querySelector(`.tab[data-tab='${name}']`).click();
+
+    collapseAllSections();
+
+    /* PLAYER */
+    if (item.type === "player") {
+        openTab("last5");
+
+        const teamID = "last5_" + item.team.replace(/\W/g, "_");
+        const playerID = teamID + "_" + item.player.replace(/\W/g, "_");
+
+        document.getElementById(teamID).style.display = "block";
+        document.getElementById(playerID).style.display = "block";
+        document.getElementById(playerID).scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+    }
+
+    /* =============================
+   PLAYER + MODE SEARCH
+   (hydra hard point → open last5 → hydra → hardpoint)
+   ============================= */
+if (item.type === "player_mode") {
+    openTab("last5");
+
+    const teamID = "last5_" + item.team.replace(/\W/g, "_");
+    const playerID = teamID + "_" + item.player.replace(/\W/g, "_");
+    const modeID = playerID + "_" + item.mode;
+
+    // Open team → player → mode
+    document.getElementById(teamID).style.display = "block";
+    document.getElementById(playerID).style.display = "block";
+    document.getElementById(modeID).style.display = "block";
+
+    smoothScrollCenter(document.getElementById(modeID));
+    return;
+}
+
+    /* MODE */
+    if (item.type === "mode") {
+        openTab("modes");
+        const modeID = "mode_" + item.mode;
+        const div = document.getElementById(modeID);
+        if (div) {
+            div.style.display = "block";
+            div.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        return;
+    }
+
+    /* MAP */
+    if (item.type === "map") {
+        openTab("modes");
+        const modeID = "mode_" + item.mode;
+        const mapID = modeID + "_" + item.map.replace(/\W/g, "_");
+
+        document.getElementById(modeID).style.display = "block";
+
+        setTimeout(() => {
+            const mapDiv = document.getElementById(mapID);
+            if (mapDiv) {
+                mapDiv.style.display = "block";
+                mapDiv.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        }, 40);
+        return;
+    }
+
+    /* ============================================================
+       TEAM → MODE → MAP (NEW)
+       ============================================================ */
+    if (item.type === "team_mode_map") {
+        openTab("modes");
+
+        const modeID = "mode_" + item.mode;
+        const mapID = modeID + "_" + item.map.replace(/\W/g, "_");
+        const teamID = mapID + "_" + item.team.replace(/\W/g, "_");
+
+        document.getElementById(modeID).style.display = "block";
+        document.getElementById(mapID).style.display = "block";
+        document.getElementById(teamID).style.display = "block";
+
+        setTimeout(() => {
+            document.getElementById(teamID).scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+        }, 120);
+
+        return;
+    }
+
+    /* ============================================================
+       UNIQUE MATCH OPENING — MODE → MAP → TEAM → OPPONENT
+       ============================================================ */
+    if (item.type === "vs_match") {
+        openTab("matches");
+        collapseAllSections();
+
+        const modeID = "matchMode_" + item.mode;
+        const mapID = modeID + "_" + item.map.replace(/\W/g, "_");
+
+        document.getElementById(modeID).style.display = "block";
+        document.getElementById(mapID).style.display = "block";
+
+        let teamA = item.teamA.toLowerCase();
+        let teamB = item.teamB.toLowerCase();
+
+        const teamsPlayed = [...new Set(
+            Array.from(document.getElementById(mapID).querySelectorAll(".teamTitle"))
+                .map(t => t.textContent.trim().toLowerCase())
+        )];
+
+        if (!teamsPlayed.includes(teamA) && teamsPlayed.includes(teamB)) {
+            [teamA, teamB] = [teamB, teamA];
+        }
+
+        const teamID = mapID + "_" + teamA.replace(/\W/g, "_");
+        const oppID = teamID + "_opp_" + teamB.replace(/\W/g, "_");
+
+        document.getElementById(teamID).style.display = "block";
+        document.getElementById(oppID).style.display = "block";
+
+        const cards = Array.from(document.getElementById(oppID).querySelectorAll(".matchCardSide"));
+        if (cards.length > 0) {
+            setTimeout(() => {
+                cards[0].scrollIntoView({ behavior: "smooth", block: "center" });
+            }, 120);
+        }
+
+        return;
+    }
+}
+
+
+
 
 
 // ============================
@@ -120,32 +570,74 @@ function collapseAllLast5Except(idToKeep) {
         if (el.id !== idToKeep) el.style.display = "none";
     });
 }
+/*
+function collapseStreakSubsections(sectionPrefix, idToKeep) {
+    document.querySelectorAll(`[id^='${sectionPrefix}_sub_']`).forEach(div => {
+        if (div.id !== idToKeep) div.style.display = "none";
+    });
+}
+*/
 
 
-// ============================
-// TABS UI
+// TABS UI (with sliding animation)
 // ============================
 function buildTabs() {
     const tabs = document.querySelectorAll(".tab");
     const contents = document.querySelectorAll(".tab-content");
     const underline = document.getElementById("tab-underline");
+    const tabBar = document.querySelector(".tab-bar");
 
     function activate(tabName) {
-        tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === tabName));
-        contents.forEach(c => c.classList.toggle("activeTab", c.id === "tab-" + tabName));
+        // Activate correct tab visually
+        tabs.forEach(t =>
+            t.classList.toggle("active", t.dataset.tab === tabName)
+        );
 
+        // Slide / fade in active content
+        contents.forEach(c => {
+            if (c.id === "tab-" + tabName) {
+                c.classList.add("activeTab");
+                void c.offsetWidth; // restart animation
+            } else {
+                c.classList.remove("activeTab");
+            }
+        });
+
+        // Underline animation
         const active = document.querySelector(".tab.active");
         if (active) {
             const r = active.getBoundingClientRect();
-            const pr = active.parentElement.getBoundingClientRect();
+            const pr = tabBar.getBoundingClientRect();
             underline.style.width = r.width + "px";
             underline.style.left = (r.left - pr.left) + "px";
+
+            // Auto-center the active tab in the scrollable bar
+            const offset = (r.left - pr.left) - (tabBar.clientWidth / 2 - r.width / 2);
+            tabBar.scrollBy({ left: offset, behavior: "smooth" });
         }
     }
 
-    tabs.forEach(t => t.addEventListener("click", () => activate(t.dataset.tab)));
+    // Click events
+    tabs.forEach(t =>
+        t.addEventListener("click", () => activate(t.dataset.tab))
+    );
+
+    // Fade shadows based on scroll position
+    tabBar.addEventListener("scroll", () => {
+        if (tabBar.scrollLeft > 5) tabBar.classList.add("scrolling-left");
+        else tabBar.classList.remove("scrolling-left");
+
+        if (tabBar.scrollLeft + tabBar.clientWidth < tabBar.scrollWidth - 5)
+            tabBar.classList.add("scrolling-right");
+        else
+            tabBar.classList.remove("scrolling-right");
+    });
+
+    // Initialize with first tab active
     activate("modes");
 }
+
+
 
 // ============================
 // GAME MODES TAB with FULL COLLAPSE
@@ -277,40 +769,21 @@ function buildLast5(scores, matches, teams) {
 
             const playerBox = document.getElementById(playerID);
 
-            // compute streak emoji per mode
-            const modeStreakIcon = {};
-
+            // SHOW MODES — NO MORE STREAK EMOJIS
             modes.forEach(mode => {
                 const recent = matches
                     .filter(m => m.team === team && m.player === player && m.mode === mode)
-                    .sort((a,b)=>b.matchID - a.matchID).slice(0,5).reverse();
-
-                if (recent.length === 0) {
-                    modeStreakIcon[mode] = "";
-                    return;
-                }
-
-                const streak = getHotStreak(recent);
-                modeStreakIcon[mode] =
-                    streak === "hot" ? "🔥" :
-                    streak === "cold" ? "❄️" :
-                    "⚖️";
-            });
-
-            // display per mode
-            modes.forEach(mode => {
-                const recent = matches
-                    .filter(m => m.team === team && m.player === player && m.mode === mode)
-                    .sort((a,b)=>b.matchID - a.matchID).slice(0,5).reverse();
+                    .sort((a,b)=>b.matchID - a.matchID)
+                    .slice(0,5)
+                    .reverse();
 
                 if (recent.length === 0) return;
 
-                const emoji = modeStreakIcon[mode];
                 const modeID = playerID + "_" + mode;
 
                 playerBox.innerHTML += `
                     <h4 onclick="toggle('${modeID}', event)">
-                        ${modeNames[mode] ?? cap(mode)} ${emoji}
+                        ${modeNames[mode] ?? cap(mode)}
                     </h4>
                     <div id="${modeID}" class="hidden"></div>
                 `;
@@ -338,10 +811,9 @@ function buildLast5(scores, matches, teams) {
         });
     });
 }
-
-
+/*
 // ============================
-// STREAKS TAB
+// UPDATED STREAKS TAB (WITH BEST/WORST INCLUDING MODE)
 // ============================
 function buildStreaks(matches, teams) {
     const root = document.getElementById("tab-streaks");
@@ -358,6 +830,7 @@ function buildStreaks(matches, teams) {
         const glow = glowColors[team] ?? "#fff";
 
         teams[team].forEach(player => {
+
             modes.forEach(mode => {
                 const recent = matches
                     .filter(m=>m.team===team && m.player===player && m.mode===mode)
@@ -369,11 +842,24 @@ function buildStreaks(matches, teams) {
                 const last = recent[recent.length-1];
                 const lastKD = last.deaths>0 ? (last.kills/last.deaths).toFixed(2) : last.kills;
 
+                const bw = getPlayerBestWorstMaps(matches, team, player);
+
                 const card = `
                     <div class="streak-card ${streak}" style="--glow:${glow}">
                         <div class="streak-player">${cap(player)}</div>
                         <div class="streak-team">${cap(team)}</div>
                         <div class="streak-kd">KD: ${lastKD}</div>
+
+                        ${bw ? `
+                        <div class="streak-bw">
+                            <div class="bw-best">
+                                ⭐ Best: ${bw.best.map} (${bw.best.kd.toFixed(2)}) — ${modeNames[bw.best.mode] ?? cap(bw.best.mode)}
+                            </div>
+                            <div class="bw-worst">
+                                ❄️ Worst: ${bw.worst.map} (${bw.worst.kd.toFixed(2)}) — ${modeNames[bw.worst.mode] ?? cap(bw.worst.mode)}
+                            </div>
+                        </div>
+                        ` : ""}
                     </div>
                 `;
 
@@ -384,7 +870,7 @@ function buildStreaks(matches, teams) {
         });
     });
 
-    // RENDER
+    // RENDER EACH MODE SECTION
     modes.forEach(mode => {
         const sectionID = "streaks_" + mode;
 
@@ -398,23 +884,38 @@ function buildStreaks(matches, teams) {
         const box = document.getElementById(sectionID);
 
         box.innerHTML = `
-            <div class="streak-section hot">
-                <div class="streak-section-title">🔥 HOT STREAKS</div>
-                <div class="streak-row">${modeHot[mode].join("") || "<p>No hot streaks</p>"}</div>
-            </div>
+    <!-- HOT -->
+    <h3 class="mapHeader"
+        onclick="collapseStreakSubsections('${sectionID}', '${sectionID}_sub_hot'); toggle('${sectionID}_sub_hot', event)">
+        🔥 HOT STREAKS
+    </h3>
+    <div id="${sectionID}_sub_hot" class="hidden">
+        <div class="streak-row">${modeHot[mode].join("") || "<p>No hot streaks</p>"}</div>
+    </div>
 
-            <div class="streak-section even">
-                <div class="streak-section-title">⚖️ EVEN STREAKS</div>
-                <div class="streak-row">${modeEven[mode].join("") || "<p>No even streaks</p>"}</div>
-            </div>
+    <!-- EVEN -->
+    <h3 class="mapHeader"
+        onclick="collapseStreakSubsections('${sectionID}', '${sectionID}_sub_even'); toggle('${sectionID}_sub_even', event)">
+        ⚖️ EVEN STREAKS
+    </h3>
+    <div id="${sectionID}_sub_even" class="hidden">
+        <div class="streak-row">${modeEven[mode].join("") || "<p>No even streaks</p>"}</div>
+    </div>
 
-            <div class="streak-section cold">
-                <div class="streak-section-title">❄️ COLD STREAKS</div>
-                <div class="streak-row">${modeCold[mode].join("") || "<p>No cold streaks</p>"}</div>
-            </div>
-        `;
+    <!-- COLD -->
+    <h3 class="mapHeader"
+        onclick="collapseStreakSubsections('${sectionID}', '${sectionID}_sub_cold'); toggle('${sectionID}_sub_cold', event)">
+        ❄️ COLD STREAKS
+    </h3>
+    <div id="${sectionID}_sub_cold" class="hidden">
+        <div class="streak-row">${modeCold[mode].join("") || "<p>No cold streaks</p>"}</div>
+    </div>
+`;
+
     });
 }
+
+
 
 // ensure only one streak section open
 function openStreak(idToOpen) {
@@ -423,6 +924,7 @@ function openStreak(idToOpen) {
     });
 }
 
+*/
 
 // ============================
 // MATCHES TAB (full dynamic)
@@ -520,25 +1022,34 @@ function buildMatches(matches, teams, modeMaps) {
                     let html = "";
 
                     opponents[opp].forEach(entry => {
-                        let scoreColor = entry.myScore > entry.oppScore
-                            ? "#4caf50" : entry.myScore < entry.oppScore
-                            ? "#e74c3c" : "#bbb";
+                        let scoreColor = "#ffffff";
 
                         html += `
                             <div class="matchCardSide" style="--glow:${glowColors[team] || "#fff"}">
-                                <div class="matchHeader">
-                                    <img class="matchLogo" src="test1/logos/${team}.webp"
-                                        onerror="this.onerror=null;this.src='test1/logos/${team}.png'">
-                                    <div class="matchTeamName">${cap(team)}</div>
 
-                                    <div class="matchScore" style="color:${scoreColor}">
+                                <!-- NEW HEADER LAYOUT -->
+                                <div class="matchHeader">
+
+                                    <div class="matchScoreBig" style="color:${scoreColor}">
                                         ${entry.myScore} — ${entry.oppScore}
                                     </div>
 
-                                    <div class="matchTeamName">${cap(opp)}</div>
-                                    <img class="matchLogo" src="test1/logos/${opp}.webp"
-                                        onerror="this.onerror=null;this.src='test1/logos/${opp}.png'">
+                                    <div class="matchTeamsRow">
+                                        <img class="matchLogo" src="test1/logos/${team}.webp"
+                                            onerror="this.onerror=null;this.src='test1/logos/${team}.png'">
+
+                                        <div class="matchVS">
+                                            ${cap(team)}
+                                            <span class="vsText">vs</span>
+                                            ${cap(opp)}
+                                        </div>
+
+                                        <img class="matchLogo" src="test1/logos/${opp}.webp"
+                                            onerror="this.onerror=null;this.src='test1/logos/${opp}.png'">
+                                    </div>
+
                                 </div>
+                                <!-- END HEADER -->
 
                                 <div class="matchTwoTables">
 
@@ -579,6 +1090,7 @@ function buildMatches(matches, teams, modeMaps) {
         });
     });
 }
+
 
 
 // ============================

@@ -11,20 +11,40 @@
 </head>
 <body onload='initPage()'>
 
-<h1 class='page-title'>INTERACTIVE SCOREBOARD</h1>
+<h1 class='page-title'>CALL OF DUTY</h1>
+<h2 class='page-title'>BLACK OPS 7</h2>
+<h3 class='page-title'>SEASON 25/26</h3>
+<div class="search-wrapper">
+    <input id="globalSearch"
+           type="text"
+           placeholder="Search players, teams, maps, modes..."
+           autocomplete="off">
+    <div id="searchResults"></div>
+</div>
+
 
 <div class='tab-bar'>
     <div class='tab active' data-tab='modes'>AVG STATS</div>
     <div class='tab' data-tab='last5'>LAST 5 MATCHES</div>
-    <div class='tab' data-tab='streaks'>STREAKS</div>
+    <!-- <div class='tab' data-tab='streaks'>STREAKS</div> -->
     <div class='tab' data-tab='matches'>MATCHES</div>
     <div id='tab-underline'></div>
 </div>
 
 <div id='tab-modes' class='tab-content activeTab'></div>
 <div id='tab-last5' class='tab-content'></div>
-<div id='tab-streaks' class='tab-content'></div>
+<!-- <div id='tab-streaks' class='tab-content'></div> -->
 <div id='tab-matches' class='tab-content'></div>
 
 </body>
+<footer class="site-disclaimer">
+    <p>
+        DISCLAIMER: This is an unofficial fan-made website and is not affiliated with, endorsed by, 
+        or sponsored by Activision Blizzard, the Call of Duty League, or any professional esports 
+        organization. All trademarks, logos, and images are the property of their respective 
+        owners and are used for informational purposes only. If you are a rights holder and would 
+        like content removed or modified, please contact me and it will be addressed immediately.
+    </p>
+</footer>
+
 </html>
