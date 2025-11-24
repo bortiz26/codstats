@@ -3,9 +3,9 @@
 ============================================================ */
 
 body {
-    background: 
+    background:
         linear-gradient(rgba(5,6,8,0.85), rgba(5,6,8,0.85)),
-        url("cod.webp") no-repeat center center fixed;
+        url("test1/logos/cod.webp") no-repeat center center fixed;
     background-size: cover;
 
     color: white;
@@ -14,13 +14,13 @@ body {
     padding: 20px;
 }
 
-
 .page-title {
     text-align: center;
     margin-bottom: 10px;
 }
 
 .hidden { display: none; }
+
 
 /* ============================================================
    TABS + SCROLLING
@@ -77,18 +77,22 @@ body {
     pointer-events: none;
     transition: opacity .25s;
 }
+
 .tab-bar::before {
     left: 0;
     background: linear-gradient(to right, #050608 60%, transparent);
     opacity: 0;
 }
+
 .tab-bar::after {
     right: 0;
     background: linear-gradient(to left, #050608 60%, transparent);
     opacity: 0;
 }
+
 .tab-bar.scrolling-left::before { opacity: 1; }
 .tab-bar.scrolling-right::after { opacity: 1; }
+
 
 /* ============================================================
    COLLAPSE HEADERS
@@ -113,6 +117,7 @@ body {
     margin: 10px 0;
     cursor: pointer;
 }
+
 
 /* ============================================================
    TEAM BOXES
@@ -143,6 +148,7 @@ body {
     text-shadow: 0 0 10px var(--glow);
 }
 
+
 /* ============================================================
    PLAYER TABLES
 ============================================================ */
@@ -167,8 +173,9 @@ body {
     font-weight: bold;
 }
 
+
 /* ============================================================
-   LAST 5 — SCROLL CARDS
+   LAST 5 — HORIZONTAL CARD STRIP
 ============================================================ */
 
 .match-strip {
@@ -178,11 +185,6 @@ body {
     padding: 10px 4px;
     margin: 12px 0;
     scroll-snap-type: x mandatory;
-}
-.match-strip::-webkit-scrollbar { height: 6px; }
-.match-strip::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.3);
-    border-radius: 999px;
 }
 
 .match-card {
@@ -208,104 +210,6 @@ body {
 .kd-good { color: #4cd137; font-weight: bold; }
 .kd-bad  { color: #e84118; font-weight: bold; }
 
-/*
-============================================================
-   STREAKS — CARDS
-============================================================ 
-
-.streak-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    justify-content: center;
-    margin-bottom: 25px;
-}
-
-.streak-card {
-    width: 180px;
-    background: #111;
-    padding: 14px;
-    border-radius: 12px;
-    text-align: center;
-    border: 2px solid #666;   /* default before color applied 
-    box-shadow: none;
-    text-transform: uppercase;
-}
-
-.streak-player { font-size: 1.2em; font-weight: bold; margin-bottom: 6px; }
-.streak-team { font-size: .9em; color: #aaa; margin-bottom: 8px; }
-.streak-kd { font-size: 1em; font-weight: bold; }
-
-/* ============================================================
-   STREAK HEADERS (Glow)
-============================================================ 
-
-#tab-streaks h3[onclick*="sub_hot"] {
-    background: rgba(255, 50, 50, 0.15);
-    border: 2px solid rgba(255, 60, 60, 0.5);
-    box-shadow: 0 0 20px rgba(255, 60, 60, 0.6);
-    text-shadow: 0 0 8px rgba(255, 60, 60, 0.8);
-    padding: 10px 14px;
-    border-radius: 12px;
-}
-
-#tab-streaks h3[onclick*="sub_even"] {
-    background: rgba(255, 255, 255, 0.12);
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
-    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-    padding: 10px 14px;
-    border-radius: 12px;
-}
-
-#tab-streaks h3[onclick*="sub_cold"] {
-    background: rgba(70, 200, 255, 0.15);
-    border: 2px solid rgba(80, 200, 255, 0.5);
-    box-shadow: 0 0 20px rgba(80, 200, 255, 0.7);
-    text-shadow: 0 0 8px rgba(80, 200, 255, 0.8);
-    padding: 10px 14px;
-    border-radius: 12px;
-}
-
-/* ============================================================
-   FULL SECTION GLOW — HOT / EVEN / COLD
-============================================================ 
-
-.streak-section.hot {
-    background: rgba(255, 40, 40, 0.20) !important;
-    border: 2px solid rgba(255, 60, 60, 1) !important;
-    box-shadow: 0 0 55px rgba(255, 60, 60, 1) !important;
-}
-.streak-section.hot * {
-    border-color: rgba(255, 60, 60, 0.85) !important;
-    text-shadow: 0 0 12px rgba(255, 60, 60, 0.9) !important;
-    box-shadow: 0 0 22px rgba(255, 60, 60, 0.6) !important;
-}
-
-/* ⚪ EVEN SECTION 
-.streak-section.even {
-    background: rgba(255, 255, 255, 0.12) !important;
-    border: 2px solid rgba(255, 255, 255, 1) !important;
-    box-shadow: 0 0 55px rgba(255, 255, 255, 1) !important;
-}
-.streak-section.even * {
-    border-color: rgba(255, 255, 255, 0.85) !important;
-    text-shadow: 0 0 12px rgba(255, 255, 255, 0.9) !important;
-    box-shadow: 0 0 22px rgba(255, 255, 255, 0.6) !important;
-}
-
-/* ❄ COLD SECTION 
-.streak-section.cold {
-    background: rgba(60, 180, 255, 0.18) !important;
-    border: 2px solid rgba(80, 200, 255, 1) !important;
-    box-shadow: 0 0 55px rgba(80, 200, 255, 1) !important;
-}
-.streak-section.cold * {
-    border-color: rgba(80, 200, 255, 0.85) !important;
-    text-shadow: 0 0 12px rgba(80, 200, 255, 0.9) !important;
-    box-shadow: 0 0 22px rgba(80, 200, 255, 0.6) !important;
-}
-*/
 
 /* ============================================================
    MATCHES TAB
@@ -334,8 +238,6 @@ body {
 .matchScoreBig {
     font-size: 2.1em;
     font-weight: bold;
-    width: 100%;
-    text-align: center;
     text-shadow: 0 0 10px var(--glow);
 }
 
@@ -351,9 +253,8 @@ body {
     font-weight: bold;
     text-shadow: 0 0 6px var(--glow);
 }
-.vsText { opacity: 0.75; margin: 0 4px; }
 
-.matchTeamsRow .matchLogo {
+.matchLogo {
     width: 48px;
     height: 48px;
     object-fit: contain;
@@ -365,12 +266,6 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: 25px;
     margin-top: 15px;
-    width: 100%;
-}
-
-.matchTable {
-    width: 100%;
-    border-collapse: collapse;
 }
 
 .matchTable td,
@@ -378,45 +273,65 @@ body {
     padding: 6px;
 }
 
-/* ============================================================
-   ANIMATION
-============================================================ */
-
-.tab-content {
-    display: none;
-    opacity: 0;
-    transform: translateX(35px);
-    transition: opacity .35s ease, transform .35s cubic-bezier(0.16,1,0.3,1);
-}
-.activeTab {
-    display: block;
-    opacity: 1;
-    transform: translateX(0);
-}
 
 /* ============================================================
-   MOBILE
+   BEST PICKS TAB
 ============================================================ */
 
-@media (max-width: 600px) {
-    body { padding: 12px; font-size: 14px; }
-    .tab { padding: 8px 16px; font-size: .9em; }
-    .teamBox img { width: 55px; }
-    .matchTeamsRow .matchLogo { width: 38px; height: 38px; }
+.bp-control {
+    background: rgba(0,0,0,0.4);
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
-/* ============================================================
-   EXTRA STREAK TEXT
-============================================================ */
-
-.streak-bw {
-    margin-top: 8px;
-    font-size: 0.85em;
-    text-align: center;
+.bp-control label {
+    font-size: 14px;
+    opacity: 0.8;
 }
 
-.bw-best { color: #4cd137; font-weight: bold; }
-.bw-worst { color: #e84118; font-weight: bold; margin-top: 2px; }
+.bp-control select,
+.bp-control input {
+    padding: 10px;
+    background: #0d0f11;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+#bp-run {
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(90deg, #ff004c, #ff9900);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(255,50,50,0.6);
+}
+
+.bp-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: rgba(0,0,0,0.4);
+}
+
+.bp-table th {
+    background: rgba(255,255,255,0.08);
+    padding: 10px;
+}
+
+.bp-table td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
 
 /* ============================================================
    SEARCH BAR
@@ -434,19 +349,14 @@ body {
     padding: 12px 14px;
     border-radius: 10px;
     border: 2px solid #555;
-    font-size: 1em;
     background: #111;
     color: white;
-    outline: none;
     text-transform: none;
 }
-
-#globalSearch:focus { border-color: #888; }
 
 #searchResults {
     position: absolute;
     top: 48px;
-    left: 0;
     width: 100%;
     background: #111;
     border: 1px solid #333;
@@ -464,8 +374,9 @@ body {
 }
 .search-item:hover { background: #222; }
 
+
 /* ============================================================
-   DISCLAIMER (FOOTER)
+   DISCLAIMER
 ============================================================ */
 
 .site-disclaimer {
@@ -475,13 +386,48 @@ body {
     font-size: 11px;
     line-height: 1.45;
     color: rgba(255, 255, 255, 0.55);
-    border-top: 1px solid rgba(255, 255, 255, 0.10);
+    border-top: 1px solid rgba(255,255,255,0.10);
     max-width: 750px;
     margin-left: auto;
     margin-right: auto;
     text-transform: none;
 }
 
-.site-disclaimer p {
-    margin: 0;
+
+/* ============================================================
+   ANIMATION
+============================================================ */
+
+.tab-content {
+    display: none;
+    opacity: 0;
+    transform: translateX(35px);
+    transition: opacity .35s, transform .35s cubic-bezier(0.16,1,0.3,1);
+}
+
+.activeTab {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media (max-width: 600px) {
+    body { padding: 12px; font-size: 14px; }
+    .tab { padding: 8px 16px; font-size: .9em; }
+    .teamBox img { width: 55px; }
+    .matchLogo { width: 38px; height: 38px; }
+
+    body {
+        background:
+            linear-gradient(rgba(5,6,8,0.82), rgba(5,6,8,0.82)),
+            url("test1/logos/cod.webp") no-repeat center top;
+        background-size: contain;
+        background-attachment: scroll;
+        background-color: #050608;
+    }
 }

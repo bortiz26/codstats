@@ -1,5 +1,5 @@
 {
-    "hp": ["Mercado", "Hotel", "Zarqwa", "Breenbergh", "Sub Base"],
-    "snd": ["Asilo", "Embassy", "Terminal"],
-    "overload": ["Invasion", "Karachi", "Highrise", "Estate"]
+    "hp": ["Den", "Raid", "Colossus", "Exposure", "Scar", "Cortex", "The Forge"],
+    "snd": ["Den", "Raid", "Express", "Colossus", "Scar", "Exposure"],
+    "overload": ["Imprint", "Exposure", "Den", "Scar"]
 }
