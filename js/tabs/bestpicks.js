@@ -1,85 +1,94 @@
 // ============================================================
-// BEST PICKS TAB (UI + ENGINE)
+// BEST PICKS TAB — HP & SND (Dual-Mode) with Full HP-Style Logic
 // ============================================================
 
-// MAIN ENTRY FROM init.js
+let BP_MODE = "hp";
+
+// Switch HP/SND mode + repopulate maps
+function setBPMODE(mode, modeMaps) {
+    BP_MODE = mode;
+    const mapSelect = document.getElementById("bp-map");
+    mapSelect.innerHTML = modeMaps[mode]
+        .map(m => `<option value="${m}">${m}</option>`)
+        .join("");
+}
+
+// ============================================================
+// BUILD BEST PICKS UI
+// ============================================================
 function buildBestPicksTabs(matches, teams, modeMaps) {
-
     const root = document.getElementById("tab-bestpicks");
-    root.innerHTML = "";
-
-    const modes = Object.keys(modeMaps);
-
     root.innerHTML = `
-        <div class="bp-container">
-            <h2 class="bp-title">BEST PICKS ANALYZER</h2>
+    <div class="bp-container">
 
-            <label class="bp-label">Team</label>
-            <select id="bp-team">
-                <option value="">Any</option>
-                ${Object.keys(teams).map(t =>
-                    `<option value="${t}">${cap(t)}</option>`
-                ).join("")}
-            </select>
+        <h2 class="bp-title">BEST PICKS</h2>
 
-            <label class="bp-label">Mode</label>
-            <select id="bp-mode">
-                ${modes.map(m =>
-                    `<option value="${m}">${modeNames[m]}</option>`
-                ).join("")}
-            </select>
-
-            <label class="bp-label">Map</label>
-            <select id="bp-map">
-                ${
-                    modes.flatMap(m =>
-                        modeMaps[m].map(mp =>
-                            `<option value="${mp}">${mp} (${modeNames[m]})</option>`
-                        )
-                    ).join("")
-                }
-            </select>
-
-            <label class="bp-label">Line</label>
-            <input id="bp-line" type="number" placeholder="Enter kill line">
-
-            <button id="bp-run" class="bp-btn">RUN BEST PICKS</button>
-
-            <div id="bp-results" class="bp-results"></div>
+        <div class="bp-mode-toggle">
+            <button id="bp-hp"  class="bp-toggle-btn active">Hardpoint</button>
+            <button id="bp-snd" class="bp-toggle-btn">Search & Destroy</button>
         </div>
-    `;
+
+        <label class="bp-label">Team</label>
+        <select id="bp-team">
+            <option value="">Any</option>
+            ${Object.keys(teams)
+                .map(t => `<option value="${t}">${cap(t)}</option>`)
+                .join("")}
+        </select>
+
+        <label class="bp-label">Opponent</label>
+        <select id="bp-opp">
+            <option value="">Any</option>
+            ${Object.keys(teams)
+                .map(t => `<option value="${t}">${cap(t)}</option>`)
+                .join("")}
+        </select>
+
+        <label class="bp-label">Map</label>
+        <select id="bp-map">
+            ${modeMaps["hp"]
+                .map(m => `<option value="${m}">${m}</option>`)
+                .join("")}
+        </select>
+
+        <label class="bp-label">Kill Line</label>
+        <input id="bp-line" type="number" placeholder="Ex: 7">
+
+        <button id="bp-run" class="bp-run-btn">RUN</button>
+
+        <div id="bp-results" class="bp-results"></div>
+
+    </div>`;
+
+    // Mode toggle
+    document.getElementById("bp-hp").onclick = () => {
+        document.getElementById("bp-hp").classList.add("active");
+        document.getElementById("bp-snd").classList.remove("active");
+        setBPMODE("hp", modeMaps);
+    };
+    document.getElementById("bp-snd").onclick = () => {
+        document.getElementById("bp-snd").classList.add("active");
+        document.getElementById("bp-hp").classList.remove("active");
+        setBPMODE("snd", modeMaps);
+    };
 
     document.getElementById("bp-run").onclick = () => {
-
-        const team = document.getElementById("bp-team").value;
-        const mode = document.getElementById("bp-mode").value;
-        const map  = document.getElementById("bp-map").value;
+        const team = document.getElementById("bp-team").value.trim();
+        const opp  = document.getElementById("bp-opp").value.trim();
+        const map  = document.getElementById("bp-map").value.trim();
         const line = Number(document.getElementById("bp-line").value || 0);
 
-        const out = document.getElementById("bp-results");
-
-        const html = runBestPicks(matches, teams, {
-            team, mode, map, line
-        });
-
-        out.innerHTML = html;
+        document.getElementById("bp-results").innerHTML =
+            runBestPicks(matches, teams, { team, opp, map, line });
     };
 }
 
-
-
 // ============================================================
-// CORE BEST PICKS ENGINE
+// BEST PICKS ENGINE (HP + NEW SND ENGINE)
 // ============================================================
-
 function runBestPicks(matches, teams, q) {
 
-    const { team, mode, map, line } = q;
-
-    if (mode !== "hp") {
-        return `<div class="bp-results-note">HP MODEL ONLY</div>`;
-    }
-
+    const { team, opp, map, line } = q;
     let rows = [];
 
     Object.keys(teams).forEach(t => {
@@ -91,34 +100,44 @@ function runBestPicks(matches, teams, q) {
             const pm = matches.filter(m =>
                 m.team === t &&
                 m.player === player &&
-                m.mode === "hp" &&
-                m.map === map
+                m.map === map &&
+                m.mode === BP_MODE &&
+                (opp === "" || m.opponent === opp)
             );
 
             if (pm.length === 0) return;
 
-            const last = pm[pm.length - 1];
-            const dur = last.durationSec || 360;
+            const opponent = opp || pm[pm.length - 1].opponent || "";
+            if (!opponent) return;
 
-            const exp = computeHPExpected(matches, t, player, map, last.opponent, dur);
-            const prob = hpProbability(exp.raw, line, exp.scale);
+            let exp;
+            if (BP_MODE === "hp") {
+                exp = expectedHPKills(matches, t, player, map, opponent);
+            } else {
+                exp = expectedSNDKills(matches, t, player, map, opponent);
+            }
+
+            const expected = exp.raw;
+
+            let prob;
+            if (BP_MODE === "hp") {
+                prob = poissonOver(expected, line, exp.varBoost);
+            } else {
+                prob = poissonOverSND(expected, line, exp.varBoost);
+            }
 
             rows.push({
                 player,
                 team: t,
-                raw: exp.raw,
-                norm: exp.norm,
-                diff: exp.raw - line,
-                prob: prob * 100,
-                season: exp.weightMode
+                expected,
+                diff: expected - line,
+                prob: prob * 100
             });
         });
-
     });
 
-    if (rows.length === 0) {
-        return `<div class="bp-results-note">NO MATCHES FOUND</div>`;
-    }
+    if (rows.length === 0)
+        return `<p>No matching matches found for these filters.</p>`;
 
     rows.sort((a, b) => b.prob - a.prob);
 
@@ -126,29 +145,25 @@ function runBestPicks(matches, teams, q) {
     <table class="bp-table">
         <tr>
             <th>PLAYER</th>
-            <th>RAW</th>
-            <th>NORM</th>
+            <th>EXPECTED</th>
+            <th>LINE</th>
             <th>DIFF</th>
-            <th>PROB</th>
-            <th>CONF</th>
-        </tr>
-    `;
+            <th>PROB OVER</th>
+        </tr>`;
 
     rows.forEach(r => {
-
         const color =
-            r.prob >= 60 ? "#4cd137" :
-            r.prob >= 45 ? "#fbc531" :
-                           "#e84118";
+            r.prob >= 60 ? "#2ecc71" :
+            r.prob >= 40 ? "#f1c40f" :
+            "#e74c3c";
 
         html += `
         <tr>
             <td>${cap(r.player)} (${cap(r.team)})</td>
-            <td>${r.raw.toFixed(2)}</td>
-            <td>${r.norm.toFixed(2)}</td>
+            <td>${r.expected.toFixed(2)}</td>
+            <td>${line.toFixed(1)}</td>
             <td>${r.diff.toFixed(2)}</td>
             <td style="color:${color}">${r.prob.toFixed(1)}%</td>
-            <td>${r.season}</td>
         </tr>`;
     });
 

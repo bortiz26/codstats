@@ -47,14 +47,15 @@ async function initPage() {
     window.DYNAMIC_MODEMAPS = modeMaps;
 
 
-    // --------------------------
-    // PREPROCESS (duration fix)
-    // --------------------------
-    matches.forEach(m => {
-        if (!m.durationSec && m.start && m.end) {
-            m.durationSec = computeDuration(m.start, m.end);
+    // Auto-calc SND rounds if missing
+matches.forEach(m => {
+    if (m.mode === "snd") {
+        if (!m.duration) {
+            m.duration = (m.teamScore || 0) + (m.oppScore || 0);
         }
-    });
+    }
+});
+
 
 
     // --------------------------

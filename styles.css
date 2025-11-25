@@ -431,3 +431,22 @@ body {
         background-color: #050608;
     }
 }
+.bp-mode-toggle {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.bp-toggle-btn {
+    flex: 1;
+    padding: 10px;
+    background: #0d0f11;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.bp-toggle-btn.active {
+    background: #ff004c;
+    box-shadow: 0 0 10px #ff004c;
+}

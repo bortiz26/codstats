@@ -1,205 +1,314 @@
 // ============================================================
-// HP ANALYTICS — FINAL FIXED VERSION
-// Opponent Normalized, Season-Smart, Stable Output
+// HARDPOINT (HP) — ADVANCED PREDICTION ENGINE V2 + LAST 5
 // ============================================================
 
-
-// ------------------------------------------------------------
-// SEASON WEIGHTS BASED ON SAMPLE SIZE
-// ------------------------------------------------------------
-function hpSeasonWeights(matchesCount) {
-
-    if (matchesCount <= 5) {
-        return {
-            mode: "early",
-            player: 0.35,
-            team:   0.35,
-            map:    0.20,
-            league: 0.10,
-            scale:  4.5
-        };
-    }
-
-    if (matchesCount <= 15) {
-        return {
-            mode: "mid",
-            player: 0.60,
-            team:   0.25,
-            map:    0.10,
-            league: 0.05,
-            scale:  3.0
-        };
-    }
-
-    return {
-        mode: "late",
-        player: 0.80,
-        team:   0.10,
-        map:    0.08,
-        league: 0.02,
-        scale:  2.4
-    };
+// ----------------------------
+// Safe division
+// ----------------------------
+function safeDiv(a, b) {
+    return b === 0 ? 0 : (a / b);
 }
-
-
-
-// ------------------------------------------------------------
-// CORE KPS HELPERS
-// ------------------------------------------------------------
-
-// Player KPS on given map
-function playerHPKPS(matches, team, player, map) {
-    let kills = 0, sec = 0;
-    matches.forEach(m => {
-        if (m.team === team && m.player === player && m.map === map) {
-            kills += m.kills;
-            sec   += m.durationSec;
-        }
-    });
-    if (sec === 0) return 0;
-    return kills / sec;
-}
-
-// Team KPS on map
-function teamMapKPS(matches, team, map) {
-    let kills = 0, sec = 0;
-    matches.forEach(m => {
-        if (m.team === team && m.map === map) {
-            kills += m.kills;
-            sec   += m.durationSec;
-        }
-    });
-    if (sec === 0) return 0;
-    return kills / sec;
-}
-
-// Map-wide KPS
-function mapBaselineKPS(matches, map) {
-    let kills = 0, sec = 0;
-    matches.forEach(m => {
-        if (m.map === map) {
-            kills += m.kills;
-            sec   += m.durationSec;
-        }
-    });
-    if (sec === 0) return 0;
-    return kills / sec;
-}
-
-// League KPS
-function leagueHPKPS(matches) {
-    let kills = 0, sec = 0;
-    matches.forEach(m => {
-        kills += m.kills;
-        sec   += m.durationSec;
-    });
-    if (sec === 0) return 0.032; // fallback ~2 kills/min
-    return kills / sec;
-}
-
-
-
-// ------------------------------------------------------------
-// FIXED OPPONENT DEFENSIVE KPS (NORMALIZED CORRECTLY)
-// ------------------------------------------------------------
-// We normalize team deaths PER MATCH (not per-player sum).
-// We also divide team deaths by 4 players.
-// ------------------------------------------------------------
-function opponentDefenseKPS(matches, opponent, map) {
-
-    let matchesSeen = {};
-    let totalTeamDeaths = 0;
-    let totalDuration = 0;
-
-    matches.forEach(m => {
-        if (m.team === opponent && m.map === map) {
-
-            const key = `${m.matchID}-${opponent}`;
-
-            // Count match only once
-            if (!matchesSeen[key]) {
-                matchesSeen[key] = true;
-            }
-
-            // Add player deaths
-            totalTeamDeaths += m.deaths;
-            totalDuration   += m.durationSec;
-        }
-    });
-
-    const matchCount = Object.keys(matchesSeen).length;
-    if (matchCount === 0 || totalDuration === 0) return 1.0;
-
-    // Normalize: team deaths per match / 4 players
-    const deathsPerMatch = (totalTeamDeaths / matchCount) / 4;
-
-    // Duration per match
-    const secPerMatch = totalDuration / matchCount;
-
-    return deathsPerMatch / secPerMatch;
-}
-
-
 
 // ============================================================
-// MAIN EXPECTED KILLS ENGINE
+// LAST 5 BLEND ENGINE
 // ============================================================
-function computeHPExpected(matches, team, player, map, opponent, durationSec) {
+function blendedHPExpected(seasonExp, last5Exp) {
+    // 75% season performance, 25% last 5 matches
+    if (isNaN(last5Exp)) return seasonExp;
+    return (seasonExp * 0.75) + (last5Exp * 0.25);
+}
 
-    // Core model components
-    const pKPS = playerHPKPS(matches, team, player, map);
-    const tKPS = teamMapKPS(matches, team, map);
-    const mKPS = mapBaselineKPS(matches, map);
-    const lKPS = leagueHPKPS(matches);
-
-    // Opponent defensive adjustment
-    const oKPS = opponentDefenseKPS(matches, opponent, map);
-
-    // Opponent multiplier (should be ~0.8–1.3)
-    const oppMultiplier = (lKPS > 0 ? (oKPS / lKPS) : 1.0);
-
-    // Season weighting
-    const sampleSize = matches.filter(m =>
+// ============================================================
+// 0. Extract helper: get all HP matches for player
+// ============================================================
+function getPlayerHPMatches(matches, team, player, map, opponent = null) {
+    return matches.filter(m =>
+        m.mode === "hp" &&
         m.team === team &&
         m.player === player &&
-        m.mode === "hp" &&
-        m.map === map
-    ).length;
+        m.map === map &&
+        (!opponent || m.opponent === opponent)
+    );
+}
 
-    const W = hpSeasonWeights(sampleSize);
+// ============================================================
+// 1. PLAYER KPS (kills per second) ON MAP
+// ============================================================
+function playerHPKPS(matches, team, player, map) {
+    let kills = 0, sec = 0;
 
-    // Weighted blended KPS
-    const blendedKPS =
-        (pKPS * W.player) +
-        (tKPS * W.team) +
-        (mKPS * W.map) +
-        (lKPS * W.league);
+    matches.forEach(m => {
+        if (m.team === team && m.player === player &&
+            m.mode === "hp" && m.map === map) {
+            kills += m.kills;
+            sec   += m.durationSec;
+        }
+    });
 
-    // Apply opponent multiplier (now safe)
-    const adjKPS = blendedKPS * oppMultiplier;
+    return safeDiv(kills, sec);
+}
 
-    if (durationSec <= 0) durationSec = 360;
+// ============================================================
+// 2. TEAM KPS on map
+// ============================================================
+function teamMapKPS(matches, team, map) {
+    let kills = 0, sec = 0;
 
-    // Final expected kills
-    const rawExp  = adjKPS * durationSec;
-    const normExp = adjKPS * 900;      // normalized to 10 min
+    matches.forEach(m => {
+        if (m.team === team && m.mode === "hp" && m.map === map) {
+            kills += m.kills;
+            sec   += m.durationSec;
+        }
+    });
 
+    return safeDiv(kills, sec);
+}
+
+// ============================================================
+// 3. MAP baseline KPS
+// ============================================================
+function mapBaselineKPS(matches, map) {
+    let kills = 0, sec = 0;
+
+    matches.forEach(m => {
+        if (m.mode === "hp" && m.map === map) {
+            kills += m.kills;
+            sec += m.durationSec;
+        }
+    });
+
+    return safeDiv(kills, sec);
+}
+
+// ============================================================
+// 4. LEAGUE KPS
+// ============================================================
+function leagueHPKPS(matches) {
+    let kills = 0, sec = 0;
+
+    matches.forEach(m => {
+        if (m.mode === "hp") {
+            kills += m.kills;
+            sec   += m.durationSec;
+        }
+    });
+
+    return sec === 0 ? 0.035 : kills / sec;
+}
+
+// ============================================================
+// 5. OPPONENT defensive KPS (kills allowed)
+// ============================================================
+function opponentDefenseKPS(matches, opponent, map) {
+    let deaths = 0, sec = 0;
+
+    matches.forEach(m => {
+        if (m.team === opponent &&
+            m.mode === "hp" &&
+            m.map === map) {
+            deaths += m.deaths;
+            sec += m.durationSec;
+        }
+    });
+
+    return sec === 0 ? 0.035 : (deaths / 4) / sec;
+}
+
+// ============================================================
+// 6. TRUE duration — use real match history
+// ============================================================
+function trueDuration(matches, team, player, map, opponent) {
+    const pm = getPlayerHPMatches(matches, team, player, map, opponent);
+    if (pm.length === 0) return 360;
+
+    let total = 0;
+    pm.forEach(m => total += m.durationSec);
+    return total / pm.length;
+}
+
+// ============================================================
+// 7. DPS — damage per second
+// ============================================================
+function playerDPS(matches, team, player, map, opponent) {
+    const pm = getPlayerHPMatches(matches, team, player, map, opponent);
+    if (pm.length === 0) return 1;
+
+    let dmg = 0, sec = 0;
+    pm.forEach(m => {
+        dmg += m.damage || 0;
+        sec += m.durationSec || 1;
+    });
+
+    return safeDiv(dmg, sec);
+}
+
+function leagueDPS(matches) {
+    let dmg = 0, sec = 0;
+
+    matches.forEach(m => {
+        if (m.mode === "hp") {
+            dmg += m.damage || 0;
+            sec += m.durationSec || 1;
+        }
+    });
+
+    return safeDiv(dmg, sec);
+}
+
+// ============================================================
+// 8. ROLE FACTOR (hill time)
+// ============================================================
+function roleFactor(matches, team, player, map, opponent) {
+    const pm = getPlayerHPMatches(matches, team, player, map, opponent);
+    if (pm.length === 0) return 1.0;
+
+    let total = 0;
+    pm.forEach(m => total += m.hillTime || 0);
+    const avg = total / pm.length;
+
+    if (avg <= 20) return 1.12;   // slayer
+    if (avg <= 60) return 1.00;   // flex
+    return 0.92;                  // obj
+}
+
+// ============================================================
+// 9. Engagement rate
+// ============================================================
+function engagementRate(matches, team, player, map, opponent) {
+    const pm = getPlayerHPMatches(matches, team, player, map, opponent);
+    if (pm.length === 0) return 1;
+
+    let eng = 0, sec = 0;
+    pm.forEach(m => {
+        eng += (m.kills + m.deaths);
+        sec += m.durationSec || 1;
+    });
+
+    return safeDiv(eng, sec);
+}
+
+function engagementVarianceFactor(rate) {
+    if (rate > 0.12) return 1.10;
+    if (rate > 0.09) return 1.05;
+    return 1.00;
+}
+
+// ============================================================
+// 10. Weighting option
+// ============================================================
+function hpWeightsOptionA() {
     return {
-        raw: rawExp,
-        norm: normExp,
-        scale: W.scale,
-        weightMode: W.mode,
-        oppMultiplier,
-        pKPS, tKPS, mKPS, lKPS, oKPS
+        player: 0.45,
+        opp:    0.25,
+        map:    0.15,
+        team:   0.10,
+        league: 0.05
     };
 }
 
+// ============================================================
+// 11. Raw KPS calculation (v2 engine)
+// ============================================================
+function computeHPExpected(matches, team, player, map, opponent) {
 
+    const kps_player = playerHPKPS(matches, team, player, map);
+    const kps_team   = teamMapKPS(matches, team, map);
+    const kps_map    = mapBaselineKPS(matches, map);
+    const kps_opp    = opponentDefenseKPS(matches, opponent, map);
+    const kps_league = leagueHPKPS(matches);
+
+    const w = hpWeightsOptionA();
+
+    let expKPS =
+        w.player * kps_player +
+        w.opp    * kps_opp +
+        w.map    * kps_map +
+        w.team   * kps_team +
+        w.league * kps_league;
+
+    // DPS BOOST
+    const dps_player = playerDPS(matches, team, player, map, opponent);
+    const dps_league = leagueDPS(matches);
+    const dpsFactor  = safeDiv(dps_player, dps_league);
+
+    expKPS *= (0.75 + 0.25 * dpsFactor);
+
+    // ROLE BOOST / NERF
+    const rf = roleFactor(matches, team, player, map, opponent);
+    expKPS *= rf;
+
+    // ENGAGEMENT BOOST (for variance)
+    const erate = engagementRate(matches, team, player, map, opponent);
+    const varBoost = engagementVarianceFactor(erate);
+
+    return {
+        expKPS,
+        varBoost,
+        components: {
+            kps_player,
+            kps_team,
+            kps_map,
+            kps_opp,
+            kps_league,
+            dps_player,
+            dps_league,
+            rf,
+            erate
+        }
+    };
+}
 
 // ============================================================
-// PROBABILITY ENGINE
+// 12. Expected kills (NOW WITH LAST-5 BLEND)
 // ============================================================
-function hpProbability(expected, line, scale) {
-    const x = expected - line;
-    return 1 / (1 + Math.exp(-(x / scale)));
+function expectedHPKills(matches, team, player, map, opponent) {
+
+    const exp = computeHPExpected(matches, team, player, map, opponent);
+    const duration = trueDuration(matches, team, player, map, opponent);
+
+    const seasonRaw = exp.expKPS * duration;
+
+    // -------------------------
+    // LAST 5 MATCHES
+    // -------------------------
+    const last5 = getLastN(matches, player, team, "hp", map, 5);
+    const L5 = computeLast5Stats(last5);
+    const last5Kills = L5.killsAvg;
+
+    // -------------------------
+    // BLEND
+    // -------------------------
+    const blended = blendedHPExpected(seasonRaw, last5Kills);
+
+    return {
+        raw: blended,
+        varBoost: exp.varBoost,
+        duration,
+        components: {
+            ...exp.components,
+            last5Kills
+        }
+    };
+}
+
+// ============================================================
+// 13. Poisson OVER probability
+// ============================================================
+function poissonOver(lambda, line, varBoost = 1.0) {
+
+    const adjLambda = lambda * varBoost;
+    const threshold = Math.floor(line) + 1;
+
+    let p = 0;
+    for (let k = threshold; k <= adjLambda + 30; k++) {
+        p += Math.exp(-adjLambda) * Math.pow(adjLambda, k) / factorial(k);
+    }
+    return p;
+}
+
+function factorial(n) {
+    if (n < 2) return 1;
+    let out = 1;
+    for (let i = 2; i <= n; i++) out *= i;
+    return out;
 }

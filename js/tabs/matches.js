@@ -1,5 +1,5 @@
 // ============================================================
-// MATCHES TAB BUILDER
+// MATCHES TAB BUILDER  — with DAMAGE added
 // ============================================================
 
 function buildMatchesTabs(matches, teams, modeMaps) {
@@ -64,7 +64,7 @@ function buildMatchesTabs(matches, teams, modeMaps) {
                     <div class="teamBox"
                          style="--glow:${glow}"
                          onclick="collapseExcept('${teamPrefix}', '${teamID}'); toggleSection('${teamID}', event)">
-                        
+
                         <img src="test1/logos/${team}.webp"
                              onerror="this.onerror=null;this.src='test1/logos/${team}.png'">
 
@@ -137,7 +137,7 @@ function buildMatchesTabs(matches, teams, modeMaps) {
                     let html = "";
 
                     // ============================================================
-                    // RENDER EACH MATCH
+                    // RENDER EACH MATCH (NOW WITH DAMAGE)
                     // ============================================================
                     opponents[opp].forEach(entry => {
 
@@ -171,38 +171,55 @@ function buildMatchesTabs(matches, teams, modeMaps) {
                                 <div class="matchTwoTables">
 
                                     <table class="matchTable">
-                                        <tr><th>Player</th><th>K</th><th>D</th><th>K/D</th></tr>
+                                        <tr>
+                                            <th>Player</th>
+                                            <th>K</th>
+                                            <th>D</th>
+                                            <th>K/D</th>
+                                            <th>DMG</th>
+                                        </tr>
 
                                         ${entry.myPlayers.map(p => `
                                             <tr>
                                                 <td>${cap(p.player)}</td>
                                                 <td>${p.kills}</td>
                                                 <td>${p.deaths}</td>
-                                                <td>${p.deaths > 0
-                                                    ? (p.kills/p.deaths).toFixed(2)
-                                                    : p.kills.toFixed(2)}</td>
+                                                <td>${
+                                                    p.deaths > 0
+                                                        ? (p.kills/p.deaths).toFixed(2)
+                                                        : p.kills.toFixed(2)
+                                                }</td>
+                                                <td>${p.damage ?? "-"}</td>
                                             </tr>
                                         `).join("")}
                                     </table>
 
                                     <table class="matchTable">
-                                        <tr><th>Player</th><th>K</th><th>D</th><th>K/D</th></tr>
+                                        <tr>
+                                            <th>Player</th>
+                                            <th>K</th>
+                                            <th>D</th>
+                                            <th>K/D</th>
+                                            <th>DMG</th>
+                                        </tr>
 
                                         ${entry.oppPlayers.map(p => `
                                             <tr>
                                                 <td>${cap(p.player)}</td>
                                                 <td>${p.kills}</td>
                                                 <td>${p.deaths}</td>
-                                                <td>${p.deaths > 0
-                                                    ? (p.kills/p.deaths).toFixed(2)
-                                                    : p.kills.toFixed(2)}</td>
+                                                <td>${
+                                                    p.deaths > 0
+                                                        ? (p.kills/p.deaths).toFixed(2)
+                                                        : p.kills.toFixed(2)
+                                                }</td>
+                                                <td>${p.damage ?? "-"}</td>
                                             </tr>
                                         `).join("")}
                                     </table>
 
                                 </div>
 
-                                <!-- DATE -->
                                 <div class="matchDate">${entry.date}</div>
 
                             </div>

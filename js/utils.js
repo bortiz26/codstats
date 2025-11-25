@@ -118,6 +118,38 @@ function smoothScrollCenter(el) {
 }
 
 // ============================================================
+// LAST 5 MATCHES ENGINE
+// ============================================================
+
+function getLastN(matches, player, team, mode, map, N = 5) {
+    const filtered = matches.filter(m =>
+        m.player === player &&
+        m.team === team &&
+        m.mode === mode &&
+        m.map === map
+    );
+
+    filtered.sort((a, b) => b.date - a.date);
+    return filtered.slice(0, N);
+}
+
+function computeLast5Stats(last5) {
+    if (last5.length === 0) return { killsAvg: NaN, kpm: NaN, durationAvg: NaN };
+
+    let kills = 0, duration = 0;
+    last5.forEach(m => {
+        kills += m.kills;
+        duration += m.durationSec;
+    });
+
+    const avgKills = kills / last5.length;
+    const avgDuration = duration / last5.length;
+    const kpm = avgDuration > 0 ? (kills / (avgDuration / 60)) : NaN;
+
+    return { killsAvg: avgKills, kpm: kpm, durationAvg: avgDuration };
+}
+
+// ============================================================
 // LABELS + COLORS
 // ============================================================
 

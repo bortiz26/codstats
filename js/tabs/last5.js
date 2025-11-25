@@ -95,9 +95,22 @@ function buildLast5Tabs(scores, matches, teams, modeMaps) {
 
                     html += `
                         <div class="match-card" style="--glow:${glow}">
-                            <div class="card-map">${m.map}</div>
+                            
+                            <div class="card-map">${m.map} — ${modeNames[m.mode]}</div>
+
+                            <div class="card-opponent">
+                                vs <span class="oppName">${cap(m.opponent || "unknown")}</span>
+                            </div>
+
                             <div>K: ${m.kills} &nbsp;&nbsp; D: ${m.deaths}</div>
                             <div class="${kdClass}">${kd} KD</div>
+
+                            <div>DMG: ${m.damage ?? "-"}</div>
+
+                            <div class="card-score">
+                                ${m.teamScore} - ${m.oppScore}
+                            </div>
+
                         </div>
                     `;
                 });
