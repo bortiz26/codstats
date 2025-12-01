@@ -1,5 +1,11 @@
 {
+<<<<<<< HEAD
     "hp": ["Den", "Colossus", "Exposure", "Scar", "Blackheart"],
     "snd": ["Den", "Raid", "Colossus", "Scar", "Exposure"],
     "overload": ["Exposure", "Den", "Scar"]
+=======
+    "hp": ["Den", "Raid", "Colossus", "Exposure", "Scar", "Cortex", "The Forge"],
+    "snd": ["Den", "Raid", "Express", "Colossus", "Scar", "Exposure"],
+    "overload": ["Imprint", "Exposure", "Den", "Scar"]
+>>>>>>> 454292ec1ab8fa17ef12087c6e862c03f9af0b31
 }
