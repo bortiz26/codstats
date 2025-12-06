@@ -296,8 +296,8 @@ function buildModeTabs(scores, teams, modeMaps) {
     };
 
     // ============================================================
-    // MATCH SUMMARY — OVERALL (DEDUPED)
-// ============================================================
+    // MATCH SUMMARY — OVERALL
+    // ============================================================
 
     function computeMatchSummary(team, mode, map) {
         const rows = window.matchData.filter(m =>
@@ -314,7 +314,7 @@ function buildModeTabs(scores, teams, modeMaps) {
                     teamScore: m.teamScore,
                     oppScore: m.oppScore,
                     durationSec: m.durationSec,
-                    rounds: m.duration   // SND uses duration field
+                    rounds: m.duration
                 });
             }
         });
@@ -344,15 +344,18 @@ function buildModeTabs(scores, teams, modeMaps) {
             }
         });
 
-        const avgLen = lenCount > 0 ? (lenTotal / lenCount).toFixed(0) + " sec" : "-";
-        const avgRounds = rndCount > 0 ? (rndTotal / rndCount).toFixed(1) : "-";
-
-        return { count: matches.length, wins, losses, avgLen, avgRounds };
+        return {
+            count: matches.length,
+            wins,
+            losses,
+            avgLen: lenCount > 0 ? (lenTotal / lenCount).toFixed(0) + " sec" : "-",
+            avgRounds: rndCount > 0 ? (rndTotal / rndCount).toFixed(1) : "-"
+        };
     }
 
 
     // ============================================================
-    // MATCH SUMMARY — VS OPPONENT (DEDUPED)
+    // MATCH SUMMARY — VS OPPONENT
     // ============================================================
 
     function computeMatchSummaryVS(team, opponent, mode, map) {
@@ -372,7 +375,7 @@ function buildModeTabs(scores, teams, modeMaps) {
                     teamScore: m.teamScore,
                     oppScore: m.oppScore,
                     durationSec: m.durationSec,
-                    rounds: m.duration   // SND uses duration field
+                    rounds: m.duration
                 });
             }
         });
@@ -402,14 +405,14 @@ function buildModeTabs(scores, teams, modeMaps) {
             }
         });
 
-        const avgLen = lenCount > 0 ? (lenTotal / lenCount).toFixed(0) + " sec" : "-";
-        const avgRounds = rndCount > 0 ? (rndTotal / rndCount).toFixed(1) : "-";
-
-        return { count: matches.length, wins, losses, avgLen, avgRounds };
+        return {
+            count: matches.length,
+            wins,
+            losses,
+            avgLen: lenCount > 0 ? (lenTotal / lenCount).toFixed(0) + " sec" : "-",
+            avgRounds: rndCount > 0 ? (rndTotal / rndCount).toFixed(1) : "-"
+        };
     }
-
-
-
 
     // ============================================================
     // MAIN RENDER FUNCTION
@@ -440,9 +443,8 @@ function buildModeTabs(scores, teams, modeMaps) {
         results.innerHTML = html;
     }
 
-
     // ============================================================
-    // PLAYER TABLE + SUMMARY FOOTER
+    // PLAYER TABLE (UPDATED — FULLY DYNAMIC OVERALL AVG)
     // ============================================================
 
     function renderPlayerTable(team, mode, map) {
@@ -468,7 +470,22 @@ function buildModeTabs(scores, teams, modeMaps) {
             let st;
 
             if (GM_VIEW === "overall") {
-                st = scores?.[team]?.[mode]?.[map]?.[player];
+                const filtered = window.matchData.filter(m =>
+                    norm(m.team) === norm(team) &&
+                    norm(m.mode) === norm(mode) &&
+                    norm(m.map) === norm(map) &&
+                    norm(m.player) === norm(player)
+                );
+
+                if (filtered.length === 0) return;
+
+                st = {
+                    updates: filtered.length,
+                    totalKills:  filtered.reduce((a, b) => a + b.kills, 0),
+                    totalDeaths: filtered.reduce((a, b) => a + b.deaths, 0),
+                    totalDamage: filtered.reduce((a, b) => a + b.damage, 0),
+                };
+
             } else {
                 const opp = oppSelect.value;
 
