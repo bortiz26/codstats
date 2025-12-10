@@ -1036,7 +1036,12 @@ MATCHES
     .mc-table {
         width: 100% !important;
     }
+
+    /* Keep PLAYER names on one line */
+    .mc-table td:first-child,
+    .mc-table th:first-child {
+        white-space: nowrap !important;
+        font-size: 0.92rem !important;  /* slightly smaller so MERCULES fits */
+        letter-spacing: 0.5px;
+    }
 }
-
-
-
