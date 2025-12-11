@@ -1,6 +1,6 @@
 // ============================================================
 // MATCHES TAB — QUERY SYSTEM + FULL CARD (WINNER GLOW)
-// MOBILE MODE MATCHES YOUR SCREENSHOT PERFECTLY
+// MAP IMAGE GRID ADDED (EXACT SAME SYSTEM AS modes.js + last5.js)
 // ============================================================
 
 function buildMatchesTabs(matches, teams, modeMaps) {
@@ -24,9 +24,9 @@ function buildMatchesTabs(matches, teams, modeMaps) {
 
             <!-- MAPS -->
             <label class="bp-label">Maps:</label>
-            <div id="vm-map-toggle" class="bp-mode-toggle"></div>
+            <div id="vm-map-wrapper"></div>
 
-            <!-- TEAM + OPPONENT SIDE BY SIDE -->
+            <!-- TEAM + OPPONENT -->
             <div class="vm-flex">
                 <div class="vm-col">
                     <label class="bp-label">Team:</label>
@@ -52,7 +52,7 @@ function buildMatchesTabs(matches, teams, modeMaps) {
     `;
 
     const modeBox    = document.getElementById("vm-mode-toggle");
-    const mapBox     = document.getElementById("vm-map-toggle");
+    const mapBox     = document.getElementById("vm-map-wrapper");
     const teamDrop   = document.getElementById("vm-team");
     const oppDrop    = document.getElementById("vm-opponent");
     const runBtn     = document.getElementById("vm-run");
@@ -81,7 +81,7 @@ function buildMatchesTabs(matches, teams, modeMaps) {
     });
 
     // ============================================================
-    // MAP BUTTONS
+    // MAPS (IMAGE GRID)
     // ============================================================
 
     let VM_MAP = "";
@@ -89,20 +89,63 @@ function buildMatchesTabs(matches, teams, modeMaps) {
     function loadMaps() {
         const maps = modeMaps[VM_MODE] ?? [];
 
-        mapBox.innerHTML = maps
-            .map(m => `<button class="bp-toggle-btn map-btn" data-map="${m}">${m}</button>`)
-            .join("");
+        let html = `<div class="gm-map-grid">`;
+
+        maps.forEach(mapName => {
+
+            const clean = mapName
+                .trim()
+                .replace(/\s+/g, "")
+                .replace(/[^a-zA-Z0-9]/g, "")
+                .toLowerCase();
+
+            const active = (VM_MAP === mapName) ? "active" : "";
+
+            html += `
+                <div class="gm-map-card ${active}" data-map="${mapName}">
+                    <img class="gm-map-thumb"
+                         src="test1/maps/${clean}.webp"
+                         onerror="this.onerror=null;this.src='test1/maps/${clean}.png'">
+
+                    <div class="gm-map-name">${mapName}</div>
+                </div>
+            `;
+        });
+
+        html += `</div>`;
+
+        mapBox.innerHTML = html;
 
         VM_MAP = "";
         teamDrop.innerHTML = `<option value="">Select Team</option>`;
         oppDrop.innerHTML  = `<option value="">Select Opponent</option>`;
 
-        mapBox.querySelectorAll("button").forEach(btn => {
-            btn.onclick = () => {
-                mapBox.querySelectorAll("button").forEach(b => b.classList.remove("active"));
-                btn.classList.add("active");
+        // CLICK BEHAVIOR
+        document.querySelectorAll("#vm-map-wrapper .gm-map-card").forEach(card => {
+            card.onclick = () => {
 
-                VM_MAP = btn.dataset.map;
+                const clicked = card.dataset.map;
+
+                // Toggle off
+                if (VM_MAP === clicked) {
+                    VM_MAP = "";
+                    document
+                        .querySelectorAll("#vm-map-wrapper .gm-map-card")
+                        .forEach(c => c.classList.remove("active"));
+                    teamDrop.innerHTML = `<option value="">Select Team</option>`;
+                    oppDrop.innerHTML  = `<option value="">Select Opponent</option>`;
+                    return;
+                }
+
+                // Select map
+                VM_MAP = clicked;
+
+                document
+                    .querySelectorAll("#vm-map-wrapper .gm-map-card")
+                    .forEach(c => c.classList.remove("active"));
+
+                card.classList.add("active");
+
                 loadTeams();
             };
         });
@@ -126,7 +169,7 @@ function buildMatchesTabs(matches, teams, modeMaps) {
     }
 
     // ============================================================
-    // LOAD OPPONENTS BASED ON TEAM SELECTION
+    // LOAD OPPONENTS BASED ON TEAM
     // ============================================================
 
     teamDrop.onchange = () => {
@@ -155,7 +198,7 @@ function buildMatchesTabs(matches, teams, modeMaps) {
     };
 
     // ============================================================
-    // RUN — RENDER MATCH CARDS
+    // RUN — SHOW MATCH CARDS
     // ============================================================
 
     runBtn.onclick = () => {
@@ -171,7 +214,7 @@ function buildMatchesTabs(matches, teams, modeMaps) {
     };
 
     // ============================================================
-    // RENDER MATCH CARDS — NEWEST → OLDEST
+    // RENDER MATCH CARDS — NEWEST FIRST
     // ============================================================
 
     function renderMatches(team, opp) {
@@ -208,17 +251,12 @@ function buildMatchesTabs(matches, teams, modeMaps) {
                 myScore > oppScore ? myGlow :
                 oppScore > myScore ? oppGlow : "#666";
 
-            // =====================================================
-            // FULL MATCH CARD — DESKTOP + MOBILE LAYOUT
-            // =====================================================
-
+            // FULL CARD
             html += `
                 <div class="matchCardFull" style="--glow:${glow}">
 
-                    <!-- SCORE -->
                     <div class="mc-score">${myScore} — ${oppScore}</div>
 
-                    <!-- DESKTOP HEADER (HIDDEN ON MOBILE) -->
                     <div class="mc-header">
                         <img class="mc-logo" src="test1/logos/${team}.webp"
                              onerror="this.src='test1/logos/${team}.png'">
@@ -229,15 +267,12 @@ function buildMatchesTabs(matches, teams, modeMaps) {
                              onerror="this.src='test1/logos/${opp}.png'">
                     </div>
 
-                    <!-- MOBILE LOGO + TEAM TITLE -->
                     <img class="mc-mobile-logo" src="test1/logos/${team}.webp"
                          onerror="this.src='test1/logos/${team}.png'">
                     <div class="mc-table-title">${cap(team)}</div>
 
-                    <!-- TABLES STACK -->
                     <div class="mc-tables">
 
-                        <!-- TEAM TABLE -->
                         <table class="mc-table">
                             <tr><th>PLAYER</th><th>K</th><th>D</th><th>K/D</th><th>DMG</th></tr>
                             ${my.map(p => `
@@ -251,12 +286,10 @@ function buildMatchesTabs(matches, teams, modeMaps) {
                             `).join("")}
                         </table>
 
-                        <!-- OPP LOGO + NAME FOR MOBILE -->
                         <img class="mc-mobile-logo" src="test1/logos/${opp}.webp"
                              onerror="this.src='test1/logos/${opp}.png'">
                         <div class="mc-table-title">${cap(opp)}</div>
 
-                        <!-- OPP TABLE -->
                         <table class="mc-table">
                             <tr><th>PLAYER</th><th>K</th><th>D</th><th>K/D</th><th>DMG</th></tr>
                             ${op.map(p => `
@@ -272,7 +305,6 @@ function buildMatchesTabs(matches, teams, modeMaps) {
 
                     </div>
 
-                    <!-- DATE -->
                     <div class="mc-date">${date}</div>
 
                 </div>

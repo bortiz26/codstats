@@ -117,13 +117,25 @@ function renderLast5MapToggles(modeMaps, matches, teams) {
 
     const wrapper = document.getElementById("l5-map-wrapper");
 
-    let html = `<div class="map-toggle-wrapper">`;
+    let html = `<div class="gm-map-grid">`;
 
-    modeMaps[L5_MODE].forEach(m => {
-        const active = (L5_MAP === m) ? "active" : "";
+    modeMaps[L5_MODE].forEach(mapName => {
+
+        const clean = mapName
+            .trim()
+            .replace(/\s+/g, "")
+            .replace(/[^a-zA-Z0-9]/g, "")
+            .toLowerCase();
+
+        const active = (L5_MAP === mapName) ? "active" : "";
+
         html += `
-            <div class="map-toggle-btn ${active}" data-map="${m}">
-                ${m}
+            <div class="gm-map-card ${active}" data-map="${mapName}">
+                <img class="gm-map-thumb"
+                     src="test1/maps/${clean}.webp"
+                     onerror="this.onerror=null;this.src='test1/maps/${clean}.png'">
+
+                <div class="gm-map-name">${mapName}</div>
             </div>
         `;
     });
@@ -132,33 +144,36 @@ function renderLast5MapToggles(modeMaps, matches, teams) {
 
     wrapper.innerHTML = html;
 
-    // Map click behavior
-    document.querySelectorAll("#l5-map-wrapper .map-toggle-btn").forEach(btn => {
-        btn.onclick = () => {
+    // CLICK BEHAVIOR
+    document.querySelectorAll("#l5-map-wrapper .gm-map-card").forEach(card => {
+        card.onclick = () => {
+            const clicked = card.dataset.map;
 
-            const clicked = btn.dataset.map;
-
+            // Toggle off
             if (L5_MAP === clicked) {
-                // Deselect map
                 L5_MAP = "";
-                document.querySelectorAll("#l5-map-wrapper .map-toggle-btn")
-                    .forEach(b => b.classList.remove("active"));
+                document
+                    .querySelectorAll("#l5-map-wrapper .gm-map-card")
+                    .forEach(c => c.classList.remove("active"));
 
                 if (L5_VIEW === "vs") loadL5Opponents(matches, teams);
                 return;
             }
 
+            // Set selected
             L5_MAP = clicked;
 
-            document.querySelectorAll("#l5-map-wrapper .map-toggle-btn")
-                .forEach(b => b.classList.remove("active"));
+            document
+                .querySelectorAll("#l5-map-wrapper .gm-map-card")
+                .forEach(c => c.classList.remove("active"));
 
-            btn.classList.add("active");
+            card.classList.add("active");
 
             if (L5_VIEW === "vs") loadL5Opponents(matches, teams);
         };
     });
 }
+
 
 
 
