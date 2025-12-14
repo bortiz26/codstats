@@ -198,7 +198,7 @@ function buildModeTabs(scores, teams, modeMaps) {
                 <img src="test1/logos/${team}.webp"
                      onerror="this.onerror=null;this.src='test1/logos/${team}.png'"
                      class="team-toggle-logo">
-                <div class="team-toggle-name">${cap(team)}</div>
+                <div class="team-toggle-name">${teams[team].name}</div>
             `;
 
             btn.onclick = () => {
@@ -226,7 +226,7 @@ function buildModeTabs(scores, teams, modeMaps) {
         teamSelectVS.innerHTML = "";
 
         Object.keys(teams).forEach(team => {
-            teamSelectVS.innerHTML += `<option value="${team}">${cap(team)}</option>`;
+            teamSelectVS.innerHTML += `<option value="${team}">${teams[team].name}</option>`;
         });
 
         teamSelectVS.onchange = () => {
@@ -423,13 +423,13 @@ function buildModeTabs(scores, teams, modeMaps) {
         const glow = glowColors[team] ?? "#fff";
     
         let html = `
-            <h3 class="mapHeader">${cap(team)} — ${map} (${modeNames[mode]})</h3>
-    
+            <h3 class="mapHeader">${teams[team].name} — ${map} (${modeNames[mode]})</h3>
+
             <div class="teamBox" style="--glow:${glow}">
                 <img src="./test1/logos/${team}.webp"
                      onerror="this.onerror=null;this.src='./test1/logos/${team}.png'">
     
-                <div class="teamTitle">${cap(team)}</div>
+                <div class="teamTitle">${teams[team].name}</div>
     
                 <div class="team-player-wrapper">
                     ${renderPlayerTable(team, mode, map)}
@@ -462,7 +462,7 @@ function buildModeTabs(scores, teams, modeMaps) {
                 </tr>
         `;
 
-        teams[team].forEach(player => {
+        teams[team].players.forEach(player => {
             let filtered = window.matchData.filter(m =>
                 norm(m.team) === norm(team) &&
                 norm(m.mode) === norm(mode) &&

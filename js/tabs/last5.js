@@ -177,21 +177,19 @@ function renderLast5MapToggles(modeMaps, matches, teams) {
 
 
 
-// ============================================================
-// FILTER PANEL
-// ============================================================
 function renderLast5Filters(teams, matches, modeMaps) {
 
     const root = document.getElementById("l5-filter-panel");
 
     const teamsHtml = Object.keys(teams)
-        .map(t => `<option value="${t}">${cap(t)}</option>`).join("");
+        .map(t => `<option value="${t}">${cap(teams[t].name)}</option>`)
+        .join("");
 
     const firstTeam = Object.keys(teams)[0];
 
-    const playersHtml = teams[firstTeam]
-        .map(p => `<option value="${p}">${cap(p)}</option>`).join("");
-
+    const playersHtml = (teams[firstTeam]?.players || [])
+        .map(p => `<option value="${p}">${cap(p)}</option>`)
+        .join("");
 
     if (L5_VIEW === "overall") {
         root.innerHTML = `
@@ -232,13 +230,16 @@ function renderLast5Filters(teams, matches, modeMaps) {
 
         document.getElementById("l5-player").innerHTML =
             `<option value="all">All Players</option>` +
-            teams[team].map(p => `<option value="${p}">${cap(p)}</option>`).join("");
+            (teams[team]?.players || [])
+                .map(p => `<option value="${p}">${cap(p)}</option>`)
+                .join("");
 
         if (L5_VIEW === "vs") loadL5Opponents(matches, teams);
     };
 
     if (L5_VIEW === "vs") loadL5Opponents(matches, teams);
 }
+
 
 
 
@@ -277,29 +278,32 @@ function loadL5Opponents(matches, teams) {
 
 
 
-// ============================================================
-// MAIN RENDER — ALL PLAYER SUPPORT
-// ============================================================
 function runLast5(matches, teams, modeMaps) {
 
     const out = document.getElementById("l5-output");
     out.innerHTML = "";
 
-    const team = document.getElementById("l5-team").value;
-    const selectedPlayer = document.getElementById("l5-player").value;
+    const team = document.getElementById("l5-team")?.value;
+    const selectedPlayer = document.getElementById("l5-player")?.value;
+
+    if (!team) return;
 
     const glow = glowColors[team] ?? "#fff";
 
-    // Determine players to show
-    let playersToShow =
-        (selectedPlayer === "all")
-            ? teams[team]
-            : [selectedPlayer];
+    // Determine players to show safely
+    let playersToShow = [];
+
+    if (selectedPlayer === "all") {
+        playersToShow = Array.isArray(teams[team]?.players)
+            ? teams[team].players
+            : [];
+    } else {
+        playersToShow = [selectedPlayer];
+    }
 
     let fullHTML = "";
 
     playersToShow.forEach(playerName => {
-
         let filtered = matches.filter(m =>
             m.team === team &&
             m.player === playerName &&
@@ -310,7 +314,7 @@ function runLast5(matches, teams, modeMaps) {
             filtered = filtered.filter(m => m.map === L5_MAP);
 
         if (L5_VIEW === "vs") {
-            const opp = document.getElementById("l5-opponent").value;
+            const opp = document.getElementById("l5-opponent")?.value;
             filtered = filtered.filter(m => m.opponent === opp);
         }
 
@@ -321,14 +325,18 @@ function runLast5(matches, teams, modeMaps) {
 
         if (final5.length === 0) {
             fullHTML += `
-                <h3 class="mapHeader" style="margin-top:25px;">${cap(playerName)}</h3>
+                <h3 class="mapHeader" style="margin-top:25px;">
+                    ${teams[team]?.players?.includes(playerName) ? teams[team].name + " — " + playerName : playerName}
+                </h3>
                 <div class="noData">No matches found.</div>
             `;
             return;
         }
 
         let html = `
-            <h3 class="mapHeader" style="margin-top:25px;">${cap(playerName)}</h3>
+            <h3 class="mapHeader" style="margin-top:25px;">
+                ${teams[team]?.players?.includes(playerName) ? teams[team].name + " — " + playerName : playerName}
+            </h3>
             <div class="match-strip">
         `;
 
@@ -340,19 +348,13 @@ function runLast5(matches, teams, modeMaps) {
             html += `
                 <div class="match-card" style="--glow:${glow}">
                     <div class="card-map">${m.map} — ${cap(L5_MODE)}</div>
-
                     <div class="card-opponent">
-                        vs <span class="oppName">${cap(m.opponent || "Unknown")}</span>
+                        vs <span class="oppName">${teams[m.opponent]?.name ?? m.opponent ?? "Unknown"}</span>
                     </div>
-
                     <div>K: ${m.kills} &nbsp;&nbsp; D: ${m.deaths}</div>
                     <div class="${parseFloat(kd) >= 1 ? "kd-good" : "kd-bad"}">${kd} KD</div>
-
                     <div>DMG: ${m.damage ?? "-"}</div>
-
-                    <div class="card-score">
-                        ${m.teamScore} - ${m.oppScore}
-                    </div>
+                    <div class="card-score">${m.teamScore} - ${m.oppScore}</div>
                 </div>
             `;
         });
@@ -363,3 +365,4 @@ function runLast5(matches, teams, modeMaps) {
 
     out.innerHTML = fullHTML;
 }
+

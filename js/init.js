@@ -13,9 +13,9 @@ async function initPage() {
         const modes   = await loadJSON("test1/modes.json");
 
         // Attach to globals for debugging
-        window.DYNAMIC_SCORES  = scores;
-        window.DYNAMIC_MATCHES = matches;
-        window.DYNAMIC_TEAMS   = teams;
+        window.DYNAMIC_SCORES   = scores;
+        window.DYNAMIC_MATCHES  = matches;
+        window.DYNAMIC_TEAMS    = teams;
         window.DYNAMIC_MODEMAPS = modes;
 
         // ========================================
@@ -29,6 +29,12 @@ async function initPage() {
                 }
                 if (!m.durationSec) m.durationSec = 300;
             }
+
+            // ========================================
+            // Enrich matches with full team data
+            // ========================================
+            m.teamA_full = teams[m.teamA] || { name: m.teamA, players: [] };
+            m.teamB_full = teams[m.teamB] || { name: m.teamB, players: [] };
         });
 
         // ========================================
@@ -38,6 +44,7 @@ async function initPage() {
         buildLast5Tabs(scores, matches, teams, modes);
         buildMatchesTabs(matches, teams, modes);
         buildBestPicksTabs(matches, teams, modes);
+        buildVetosTab(modes);
 
         // ========================================
         // Activate tab underline + tab switching
@@ -51,6 +58,7 @@ async function initPage() {
         alert("Error loading JSON data. Check console.");
     }
 }
+
 
 
 

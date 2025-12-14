@@ -261,7 +261,7 @@ function buildMatchesTabs(matches, teams, modeMaps) {
                         <img class="mc-logo" src="test1/logos/${team}.webp"
                              onerror="this.src='test1/logos/${team}.png'">
 
-                        <div class="mc-vs-text">${cap(team)} VS ${cap(opp)}</div>
+                        <div class="mc-vs-text">${teams[team].name} VS ${teams[opp].name}</div>
 
                         <img class="mc-logo" src="test1/logos/${opp}.webp"
                              onerror="this.src='test1/logos/${opp}.png'">
