@@ -21,7 +21,7 @@
 
     "ravens": {
         "name": "Carolina Royale Ravens",
-        "players": ["nero", "slasher", "lurqxx", "craze"]
+        "players": ["nero", "exceed", "lurqxx", "craze"]
     },
 
     "cloud9": {
@@ -56,6 +56,6 @@
 
     "surge": {
         "name": "Vancouver Surge",
-        "players": ["abe", "gwinn", "lqgend", "lunarz"]
+        "players": ["abe", "gwinn", "tjhaly", "lunarz"]
     }
 }
